@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lock Screen</title>
+<style>
+  :root { --bg:#0b0f1a; --fg:#e8ecf5; --muted:#7c869c; --accent:#5b8cff; --bad:#ff5b6e; }
+  * { box-sizing: border-box; }
+  html, body { height:100%; margin:0; }
+  body {
+    background: radial-gradient(circle at 50% 30%, #17203a, var(--bg) 70%);
+    color: var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    user-select:none; overflow:hidden;
+  }
+  .card { text-align:center; width:min(90vw, 340px); }
+  .clock { font-size:4.5rem; font-weight:200; letter-spacing:2px; margin:0; }
+  .date { color:var(--muted); margin:.2rem 0 2rem; }
+  .icon { font-size:2.5rem; margin-bottom:.5rem; }
+  h1 { font-size:1.2rem; font-weight:500; margin:0 0 1rem; }
+  input {
+    width:100%; padding:.9rem 1rem; font-size:1.1rem; text-align:center;
+    background:#ffffff10; color:var(--fg); border:1px solid #ffffff25;
+    border-radius:12px; outline:none; letter-spacing:.3rem;
+  }
+  input:focus { border-color:var(--accent); }
+  button {
+    margin-top:.8rem; width:100%; padding:.85rem; font-size:1rem; cursor:pointer;
+    background:var(--accent); color:#fff; border:0; border-radius:12px; font-weight:600;
+  }
+  button:hover { filter:brightness(1.1); }
+  .msg { min-height:1.4rem; margin-top:.8rem; color:var(--muted); font-size:.9rem; }
+  .msg.bad { color:var(--bad); }
+  .hidden { display:none; }
+  .shake { animation: shake .4s; }
+  @keyframes shake {
+    20%,60% { transform:translateX(-10px); } 40%,80% { transform:translateX(10px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- SETUP VIEW -->
+<div class="card" id="setup">
+  <div class="icon">🔓</div>
+  <h1>Choose a short password</h1>
+  <input id="newPass" type="password" maxlength="12" placeholder="••••" autocomplete="off" autofocus>
+  <button id="lockBtn">Lock</button>
+  <div class="msg" id="setupMsg">Type a password, then click Lock.</div>
+</div>
+
+<!-- LOCKED VIEW -->
+<div class="card hidden" id="locked">
+  <p class="clock" id="clock">00:00</p>
+  <p class="date" id="date"></p>
+  <div class="icon">🔒</div>
+  <input id="pass" type="password" maxlength="12" placeholder="Password" autocomplete="off">
+  <div class="msg" id="lockMsg">Type your password and press Enter</div>
+</div>
+
+<script>
+(function () {
+  const KEY = "lockscreen.hash";
+  const $ = id => document.getElementById(id);
+  const setup = $("setup"), locked = $("locked");
+  let attempts = 0;
+
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("ls:" + text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+  const getHash = () => { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
+  const setHash = h => { try { localStorage.setItem(KEY, h); } catch (e) {} };
+  const clearHash = () => { try { localStorage.removeItem(KEY); } catch (e) {} };
+
+  function tick() {
+    const d = new Date();
+    $("clock").textContent = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    $("date").textContent = d.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" });
+  }
+  setInterval(tick, 1000); tick();
+
+  function goFullscreen() {
+    const el = document.documentElement;
+    if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {});
+  }
+
+  function showLocked() {
+    setup.classList.add("hidden");
+    locked.classList.remove("hidden");
+    $("pass").value = "";
+    $("pass").focus();
+  }
+  function showSetup() {
+    locked.classList.add("hidden");
+    setup.classList.remove("hidden");
+    $("newPass").value = "";
+    $("newPass").focus();
+  }
+
+  async function lock() {
+    const p = $("newPass").value;
+    if (p.length < 1) {
+      $("setupMsg").textContent = "Please type a password first.";
+      $("setupMsg").className = "msg bad";
+      return;
+    }
+    setHash(await sha256(p));
+    attempts = 0;
+    goFullscreen();
+    showLocked();
+  }
+
+  async function tryUnlock() {
+    const p = $("pass").value;
+    if (!p) return;
+    if ((await sha256(p)) === getHash()) {
+      clearHash();
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      $("setupMsg").textContent = "Unlocked. Set a new password to lock again.";
+      $("setupMsg").className = "msg";
+      showSetup();
+    } else {
+      attempts++;
+      const m = $("lockMsg");
+      m.textContent = "Wrong password (" + attempts + ")";
+      m.className = "msg bad";
+      $("pass").value = "";
+      locked.classList.remove("shake");
+      void locked.offsetWidth;
+      locked.classList.add("shake");
+    }
+  }
+
+  $("lockBtn").addEventListener("click", lock);
+  $("newPass").addEventListener("keydown", e => { if (e.key === "Enter") lock(); });
+  $("pass").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+
+  // Keep focus on the password box while locked
+  document.addEventListener("click", () => { if (!locked.classList.contains("hidden")) $("pass").focus(); });
+  document.addEventListener("contextmenu", e => { if (!locked.classList.contains("hidden")) e.preventDefault(); });
+  // Re-enter fullscreen on next keypress/click if it was exited while locked
+  document.addEventListener("keydown", () => { if (!locked.classList.contains("hidden")) goFullscreen(); });
+  window.addEventListener("beforeunload", e => {
+    if (!locked.classList.contains("hidden")) { e.preventDefault(); e.returnValue = ""; }
+  });
+
+  // If the page is reloaded while locked, stay locked
+  if (getHash()) showLocked(); else showSetup();
+})();
+</script>
+</body>
+</html>
