@@ -3,153 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lock Screen</title>
+<title>FaceMath – Facial Harmony Rater</title>
 <style>
-  :root { --bg:#0b0f1a; --fg:#e8ecf5; --muted:#7c869c; --accent:#5b8cff; --bad:#ff5b6e; }
-  * { box-sizing: border-box; }
-  html, body { height:100%; margin:0; }
-  body {
-    background: radial-gradient(circle at 50% 30%, #17203a, var(--bg) 70%);
-    color: var(--fg);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    display:flex; align-items:center; justify-content:center;
-    user-select:none; overflow:hidden;
-  }
-  .card { text-align:center; width:min(90vw, 340px); }
-  .clock { font-size:4.5rem; font-weight:200; letter-spacing:2px; margin:0; }
-  .date { color:var(--muted); margin:.2rem 0 2rem; }
-  .icon { font-size:2.5rem; margin-bottom:.5rem; }
-  h1 { font-size:1.2rem; font-weight:500; margin:0 0 1rem; }
-  input {
-    width:100%; padding:.9rem 1rem; font-size:1.1rem; text-align:center;
-    background:#ffffff10; color:var(--fg); border:1px solid #ffffff25;
-    border-radius:12px; outline:none; letter-spacing:.3rem;
-  }
-  input:focus { border-color:var(--accent); }
-  button {
-    margin-top:.8rem; width:100%; padding:.85rem; font-size:1rem; cursor:pointer;
-    background:var(--accent); color:#fff; border:0; border-radius:12px; font-weight:600;
-  }
-  button:hover { filter:brightness(1.1); }
-  .msg { min-height:1.4rem; margin-top:.8rem; color:var(--muted); font-size:.9rem; }
-  .msg.bad { color:var(--bad); }
-  .hidden { display:none; }
-  .shake { animation: shake .4s; }
-  @keyframes shake {
-    20%,60% { transform:translateX(-10px); } 40%,80% { transform:translateX(10px); }
-  }
+  :root { --bg:#0f1117; --card:#181b24; --text:#e8eaf0; --muted:#8b91a3; --accent:#7c5cff; --good:#2ecc8f; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  .wrap { max-width:760px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { margin:0 0 4px; font-size:1.8rem; }
+  .sub { color:var(--muted); margin:0 0 20px; }
+  .card { background:var(--card); border-radius:16px; padding:20px; margin-bottom:16px; }
+  #drop { border:2px dashed #3a3f52; border-radius:14px; padding:36px 16px; text-align:center; cursor:pointer; color:var(--muted); transition:.2s; }
+  #drop.over, #drop:hover { border-color:var(--accent); color:var(--text); }
+  #status { margin-top:12px; color:var(--muted); font-size:.9rem; min-height:1.2em; }
+  #stage { position:relative; display:none; margin:0 auto; max-width:100%; }
+  #stage canvas { width:100%; height:auto; border-radius:12px; display:block; }
+  #result { display:none; }
+  .score-row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .ring { --p:0; width:130px; height:130px; border-radius:50%; display:grid; place-items:center;
+    background:conic-gradient(var(--accent) calc(var(--p)*1%), #2a2e3d 0); }
+  .ring span { background:var(--card); width:100px; height:100px; border-radius:50%; display:grid; place-items:center; font-size:2rem; font-weight:700; }
+  .verdict { flex:1; min-width:180px; }
+  .verdict h2 { margin:0 0 4px; }
+  .metric { margin:14px 0; }
+  .metric .top { display:flex; justify-content:space-between; font-size:.92rem; }
+  .metric .detail { color:var(--muted); font-size:.8rem; margin-top:2px; }
+  .bar { height:8px; background:#2a2e3d; border-radius:6px; overflow:hidden; margin-top:6px; }
+  .bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); width:0; transition:width .8s; }
+  .note { font-size:.8rem; color:var(--muted); line-height:1.5; }
+  button { background:var(--accent); color:#fff; border:0; padding:10px 18px; border-radius:10px; font-size:.95rem; cursor:pointer; }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <h1>FaceMath</h1>
+  <p class="sub">Upload a photo and get a mathematical facial-harmony score — symmetry and proportion analysis, run entirely in your browser.</p>
 
-<!-- SETUP VIEW -->
-<div class="card" id="setup">
-  <div class="icon">🔓</div>
-  <h1>Choose a short password</h1>
-  <input id="newPass" type="password" maxlength="12" placeholder="••••" autocomplete="off" autofocus>
-  <button id="lockBtn">Lock</button>
-  <div class="msg" id="setupMsg">Type a password, then click Lock.</div>
+  <div class="card">
+    <div id="drop">📷 Click or drag a front-facing photo here</div>
+    <input type="file" id="file" accept="image/*" hidden>
+    <div id="status">Loading face model…</div>
+  </div>
+
+  <div class="card" id="stage-card" style="display:none">
+    <div id="stage"><canvas id="canvas"></canvas></div>
+  </div>
+
+  <div class="card" id="result">
+    <div class="score-row">
+      <div class="ring" id="ring"><span id="scoreNum">0</span></div>
+      <div class="verdict">
+        <h2 id="verdictTitle"></h2>
+        <div class="note" id="verdictText"></div>
+      </div>
+    </div>
+    <div id="metrics"></div>
+  </div>
+
+  <div class="card note">
+    <b>How it works:</b> A face-landmark model finds 68 points on your face. The photo is rotated so your eyes are level,
+    then the app measures (1) left/right symmetry around the facial midline and (2) how close key proportions
+    (eye spacing, nose width, mouth width, facial thirds) are to classical "ideal" ratios such as 1 : 1 and the golden ratio 1.618.<br><br>
+    <b>Important:</b> this is a fun math toy, not a measure of your worth or real-world attractiveness. Attractiveness depends on
+    expression, skin, style, culture, personality and much more. Your photo never leaves your device.
+  </div>
 </div>
 
-<!-- LOCKED VIEW -->
-<div class="card hidden" id="locked">
-  <p class="clock" id="clock">00:00</p>
-  <p class="date" id="date"></p>
-  <div class="icon">🔒</div>
-  <input id="pass" type="password" maxlength="12" placeholder="Password" autocomplete="off">
-  <div class="msg" id="lockMsg">Type your password and press Enter</div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
 <script>
-(function () {
-  const KEY = "lockscreen.hash";
-  const $ = id => document.getElementById(id);
-  const setup = $("setup"), locked = $("locked");
-  let attempts = 0;
+const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+const $ = id => document.getElementById(id);
+let modelReady = false;
 
-  async function sha256(text) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("ls:" + text));
-    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+(async () => {
+  try {
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+    modelReady = true;
+    $('status').textContent = 'Model ready. Upload a clear, front-facing photo.';
+  } catch (e) {
+    $('status').textContent = 'Could not load the face model. Check your internet connection.';
   }
-  const getHash = () => { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
-  const setHash = h => { try { localStorage.setItem(KEY, h); } catch (e) {} };
-  const clearHash = () => { try { localStorage.removeItem(KEY); } catch (e) {} };
+})();
 
-  function tick() {
-    const d = new Date();
-    $("clock").textContent = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    $("date").textContent = d.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" });
-  }
-  setInterval(tick, 1000); tick();
+const drop = $('drop'), fileInput = $('file');
+drop.onclick = () => fileInput.click();
+fileInput.onchange = e => e.target.files[0] && handleFile(e.target.files[0]);
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]));
 
-  function goFullscreen() {
-    const el = document.documentElement;
-    if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {});
-  }
+async function handleFile(file) {
+  if (!file.type.startsWith('image/')) { $('status').textContent = 'Please choose an image file.'; return; }
+  if (!modelReady) { $('status').textContent = 'Model still loading, try again in a moment.'; return; }
+  $('status').textContent = 'Analyzing…';
+  $('result').style.display = 'none';
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  await img.decode();
 
-  function showLocked() {
-    setup.classList.add("hidden");
-    locked.classList.remove("hidden");
-    $("pass").value = "";
-    $("pass").focus();
-  }
-  function showSetup() {
-    locked.classList.add("hidden");
-    setup.classList.remove("hidden");
-    $("newPass").value = "";
-    $("newPass").focus();
-  }
+  const detection = await faceapi.detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 })).withFaceLandmarks();
+  const canvas = $('canvas');
+  const scale = Math.min(1, 900 / img.width);
+  canvas.width = img.width * scale; canvas.height = img.height * scale;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  $('stage-card').style.display = 'block'; $('stage').style.display = 'block';
 
-  async function lock() {
-    const p = $("newPass").value;
-    if (p.length < 1) {
-      $("setupMsg").textContent = "Please type a password first.";
-      $("setupMsg").className = "msg bad";
-      return;
-    }
-    setHash(await sha256(p));
-    attempts = 0;
-    goFullscreen();
-    showLocked();
-  }
+  if (!detection) { $('status').textContent = 'No face found. Try a well-lit, front-facing photo.'; return; }
 
-  async function tryUnlock() {
-    const p = $("pass").value;
-    if (!p) return;
-    if ((await sha256(p)) === getHash()) {
-      clearHash();
-      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-      $("setupMsg").textContent = "Unlocked. Set a new password to lock again.";
-      $("setupMsg").className = "msg";
-      showSetup();
-    } else {
-      attempts++;
-      const m = $("lockMsg");
-      m.textContent = "Wrong password (" + attempts + ")";
-      m.className = "msg bad";
-      $("pass").value = "";
-      locked.classList.remove("shake");
-      void locked.offsetWidth;
-      locked.classList.add("shake");
-    }
-  }
+  const pts = detection.landmarks.positions.map(p => ({ x: p.x * scale, y: p.y * scale }));
+  ctx.fillStyle = '#7c5cff';
+  pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(2, canvas.width / 300), 0, 7); ctx.fill(); });
 
-  $("lockBtn").addEventListener("click", lock);
-  $("newPass").addEventListener("keydown", e => { if (e.key === "Enter") lock(); });
-  $("pass").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+  const res = analyze(pts);
+  showResult(res);
+  $('status').textContent = 'Done. Upload another photo to compare.';
+}
 
-  // Keep focus on the password box while locked
-  document.addEventListener("click", () => { if (!locked.classList.contains("hidden")) $("pass").focus(); });
-  document.addEventListener("contextmenu", e => { if (!locked.classList.contains("hidden")) e.preventDefault(); });
-  // Re-enter fullscreen on next keypress/click if it was exited while locked
-  document.addEventListener("keydown", () => { if (!locked.classList.contains("hidden")) goFullscreen(); });
-  window.addEventListener("beforeunload", e => {
-    if (!locked.classList.contains("hidden")) { e.preventDefault(); e.returnValue = ""; }
+/* ---------- Math ---------- */
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+
+// score 0-100: 100 at the ideal, falling off smoothly with relative error
+function ratioScore(value, ideal, tolerance) {
+  const err = Math.abs(value - ideal) / ideal;
+  return 100 * Math.exp(-Math.pow(err / tolerance, 2));
+}
+
+const MIRROR_PAIRS = [
+  [0,16],[1,15],[2,14],[3,13],[4,12],[5,11],[6,10],[7,9],
+  [17,26],[18,25],[19,24],[20,23],[21,22],
+  [36,45],[37,44],[38,43],[39,42],[40,47],[41,46],
+  [31,35],[32,34],
+  [48,54],[49,53],[50,52],[59,55],[58,56],[60,64],[61,63],[67,65]
+];
+
+function analyze(P) {
+  // 1. Level the face: rotate so the line between eye centers is horizontal
+  const eyeR = mid(P[36], P[39]), eyeL = mid(P[42], P[45]);
+  const angle = Math.atan2(eyeL.y - eyeR.y, eyeL.x - eyeR.x);
+  const c = mid(eyeR, eyeL), cos = Math.cos(-angle), sin = Math.sin(-angle);
+  const Q = P.map(p => {
+    const dx = p.x - c.x, dy = p.y - c.y;
+    return { x: dx * cos - dy * sin, y: dx * sin + dy * cos };
   });
 
-  // If the page is reloaded while locked, stay locked
-  if (getHash()) showLocked(); else showSetup();
-})();
+  const faceW = dist(Q[0], Q[16]);
+
+  // 2. Symmetry: mirror each left point across the midline and measure mismatch
+  const midX = (Q[27].x + Q[8].x + Q[33].x + Q[51].x) / 4;
+  let sum = 0;
+  MIRROR_PAIRS.forEach(([a, b]) => {
+    const ax = Q[a].x - midX, bx = midX - Q[b].x;
+    sum += Math.hypot(ax - bx, Q[a].y - Q[b].y);
+  });
+  const asym = sum / MIRROR_PAIRS.length / faceW;
+  const symmetry = 100 * Math.exp(-Math.pow(asym / 0.05, 2) * 0.7);
+
+  // 3. Proportions
+  const eyeW = (dist(Q[36], Q[39]) + dist(Q[42], Q[45])) / 2;
+  const eyeGap = dist(Q[39], Q[42]);
+  const noseW = dist(Q[31], Q[35]);
+  const mouthW = dist(Q[48], Q[54]);
+  const browY = (Q[19].y + Q[24].y) / 2;
+  const middleThird = Q[33].y - browY;
+  const lowerThird = Q[8].y - Q[33].y;
+  const mouthToChin = Q[8].y - Q[57].y;
+  const noseToMouth = Q[57].y - Q[33].y;
+
+  const metrics = [
+    { name: 'Facial symmetry', score: symmetry, weight: 0.35,
+      detail: `Average mirror mismatch: ${(asym * 100).toFixed(1)}% of face width` },
+    { name: 'Eye spacing', score: ratioScore(eyeGap / eyeW, 1.0, 0.3), weight: 0.15,
+      detail: `Gap between eyes ÷ eye width = ${(eyeGap / eyeW).toFixed(2)} (ideal ≈ 1.00)` },
+    { name: 'Nose width', score: ratioScore(noseW / eyeGap, 1.0, 0.3), weight: 0.15,
+      detail: `Nose width ÷ eye gap = ${(noseW / eyeGap).toFixed(2)} (ideal ≈ 1.00)` },
+    { name: 'Mouth vs. nose', score: ratioScore(mouthW / noseW, 1.618, 0.25), weight: 0.15,
+      detail: `Mouth width ÷ nose width = ${(mouthW / noseW).toFixed(2)} (golden ratio 1.62)` },
+    { name: 'Facial thirds', score: ratioScore(lowerThird / middleThird, 1.0, 0.3), weight: 0.10,
+      detail: `Lower ÷ middle face = ${(lowerThird / middleThird).toFixed(2)} (ideal ≈ 1.00)` },
+    { name: 'Lower-face balance', score: ratioScore(mouthToChin / noseToMouth, 2.0, 0.3), weight: 0.10,
+      detail: `Mouth→chin ÷ nose→mouth = ${(mouthToChin / noseToMouth).toFixed(2)} (ideal ≈ 2.00)` }
+  ];
+
+  const raw = metrics.reduce((s, m) => s + m.score * m.weight, 0);
+  // gentle curve so typical faces land in a readable range instead of the harsh raw average
+  const total = Math.max(0, Math.min(100, 35 + raw * 0.65));
+  return { total, metrics };
+}
+
+function showResult({ total, metrics }) {
+  const t = Math.round(total);
+  $('result').style.display = 'block';
+  $('scoreNum').textContent = t;
+  $('ring').style.setProperty('--p', t);
+  const [title, text] =
+    t >= 90 ? ['Exceptional harmony', 'Your proportions and symmetry sit very close to the classical ideals.'] :
+    t >= 80 ? ['High harmony', 'Strong symmetry and well-balanced proportions overall.'] :
+    t >= 70 ? ['Good harmony', 'Most measurements fall near the ideal ratios.'] :
+    t >= 60 ? ['Average harmony', 'A typical mix of ratios — real faces rarely match the ideals exactly.'] :
+              ['Unconventional proportions', 'Your ratios differ from the classical ideals, which says nothing about how attractive you are. Photo angle and expression affect this a lot.'];
+  $('verdictTitle').textContent = title;
+  $('verdictText').textContent = text;
+
+  $('metrics').innerHTML = metrics.map(m => `
+    <div class="metric">
+      <div class="top"><span>${m.name}</span><b>${Math.round(m.score)}/100</b></div>
+      <div class="bar"><i data-w="${m.score}"></i></div>
+      <div class="detail">${m.detail}</div>
+    </div>`).join('');
+  requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(b => b.style.width = b.dataset.w + '%'));
+  $('result').scrollIntoView({ behavior: 'smooth' });
+}
 </script>
 </body>
 </html>
+
