@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FaceMath – Facial Harmony Rater</title>
 <style>
-  :root { --bg:#0f1117; --card:#181b24; --text:#e8eaf0; --muted:#8b91a3; --accent:#7c5cff; --good:#2ecc8f; }
+  :root { --bg:#0f1117; --card:#181b24; --text:#e8eaf0; --muted:#8b91a3; --accent:#7c5cff; --good:#2ecc8f; --warn:#f5a623; }
   * { box-sizing:border-box; }
   body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
-  .wrap { max-width:760px; margin:0 auto; padding:24px 16px 60px; }
+  .wrap { max-width:780px; margin:0 auto; padding:24px 16px 60px; }
   h1 { margin:0 0 4px; font-size:1.8rem; }
+  h3 { margin:0 0 10px; font-size:1rem; }
   .sub { color:var(--muted); margin:0 0 20px; }
   .card { background:var(--card); border-radius:16px; padding:20px; margin-bottom:16px; }
   #drop { border:2px dashed #3a3f52; border-radius:14px; padding:36px 16px; text-align:center; cursor:pointer; color:var(--muted); transition:.2s; }
   #drop.over, #drop:hover { border-color:var(--accent); color:var(--text); }
   #status { margin-top:12px; color:var(--muted); font-size:.9rem; min-height:1.2em; }
-  #stage { position:relative; display:none; margin:0 auto; max-width:100%; }
   #stage canvas { width:100%; height:auto; border-radius:12px; display:block; }
+  .toggle { margin-top:10px; font-size:.85rem; color:var(--muted); display:flex; align-items:center; gap:8px; }
   #result { display:none; }
   .score-row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
   .ring { --p:0; width:130px; height:130px; border-radius:50%; display:grid; place-items:center;
@@ -24,19 +25,23 @@
   .ring span { background:var(--card); width:100px; height:100px; border-radius:50%; display:grid; place-items:center; font-size:2rem; font-weight:700; }
   .verdict { flex:1; min-width:180px; }
   .verdict h2 { margin:0 0 4px; }
-  .metric { margin:14px 0; }
+  .group { margin-top:18px; font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .metric { margin:12px 0; }
   .metric .top { display:flex; justify-content:space-between; font-size:.92rem; }
-  .metric .detail { color:var(--muted); font-size:.8rem; margin-top:2px; }
+  .metric .detail { color:var(--muted); font-size:.8rem; margin-top:3px; }
   .bar { height:8px; background:#2a2e3d; border-radius:6px; overflow:hidden; margin-top:6px; }
   .bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); width:0; transition:width .8s; }
-  .note { font-size:.8rem; color:var(--muted); line-height:1.5; }
-  button { background:var(--accent); color:#fff; border:0; padding:10px 18px; border-radius:10px; font-size:.95rem; cursor:pointer; }
+  .warnbox { background:#2b2414; border:1px solid #5a4516; color:#f3d9a0; border-radius:10px; padding:10px 14px; font-size:.85rem; margin-top:14px; line-height:1.5; }
+  .warnbox ul { margin:6px 0 0 18px; padding:0; }
+  .conf { font-size:.85rem; color:var(--muted); margin-top:10px; }
+  .note { font-size:.8rem; color:var(--muted); line-height:1.55; }
+  .note ul { margin:6px 0 0 18px; padding:0; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>FaceMath</h1>
-  <p class="sub">Upload a photo and get a mathematical facial-harmony score — symmetry and proportion analysis, run entirely in your browser.</p>
+  <p class="sub">Upload a photo and get a mathematical facial-harmony score — 3D landmark analysis, run entirely in your browser.</p>
 
   <div class="card">
     <div id="drop">📷 Click or drag a front-facing photo here</div>
@@ -44,8 +49,18 @@
     <div id="status">Loading face model…</div>
   </div>
 
+  <div class="card note">
+    <h3>For accurate results</h3>
+    <ul>
+      <li>Look straight at the camera, chin level, neutral expression, mouth closed, eyes open.</li>
+      <li>Avoid close-up selfies (wide-angle lenses distort eye and nose ratios). Shoot from ~1–2 m, or crop a zoomed photo.</li>
+      <li>No glasses, hair over the eyes or brows, heavy shadows, or filters.</li>
+    </ul>
+  </div>
+
   <div class="card" id="stage-card" style="display:none">
     <div id="stage"><canvas id="canvas"></canvas></div>
+    <label class="toggle"><input type="checkbox" id="overlayToggle" checked> Show measurement overlay</label>
   </div>
 
   <div class="card" id="result">
@@ -54,168 +69,267 @@
       <div class="verdict">
         <h2 id="verdictTitle"></h2>
         <div class="note" id="verdictText"></div>
+        <div class="conf" id="conf"></div>
       </div>
     </div>
+    <div id="warnings"></div>
     <div id="metrics"></div>
   </div>
 
   <div class="card note">
-    <b>How it works:</b> A face-landmark model finds 68 points on your face. The photo is rotated so your eyes are level,
-    then the app measures (1) left/right symmetry around the facial midline and (2) how close key proportions
-    (eye spacing, nose width, mouth width, facial thirds) are to classical "ideal" ratios such as 1 : 1 and the golden ratio 1.618.<br><br>
+    <b>How it works:</b> A 478-point face-mesh model (MediaPipe) locates your eye corners, irises, nose, mouth and jaw in 3D.
+    The app first <i>frontalizes</i> the face — it removes head roll and left/right turn using the 3D landmarks, so a slightly turned
+    head no longer squashes the eye ratios. It then measures symmetry around the facial midline and compares key proportions
+    (eye spacing, eye width vs. face width, canthal tilt, nose, mouth, facial thirds) to classical ideals such as
+    "one eye-width apart" and the golden ratio.<br><br>
     <b>Important:</b> this is a fun math toy, not a measure of your worth or real-world attractiveness. Attractiveness depends on
     expression, skin, style, culture, personality and much more. Your photo never leaves your device.
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
-<script>
-const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+<script type="module">
+import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm";
+
+const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
+const MODEL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
 const $ = id => document.getElementById(id);
-let modelReady = false;
+let landmarker = null, lastDraw = null;
 
 (async () => {
   try {
-    await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
-    await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-    modelReady = true;
+    const fileset = await FilesetResolver.forVisionTasks(WASM);
+    landmarker = await FaceLandmarker.createFromOptions(fileset, {
+      baseOptions: { modelAssetPath: MODEL, delegate: "CPU" },
+      runningMode: "IMAGE",
+      numFaces: 2
+    });
     $('status').textContent = 'Model ready. Upload a clear, front-facing photo.';
   } catch (e) {
-    $('status').textContent = 'Could not load the face model. Check your internet connection.';
+    console.error(e);
+    $('status').textContent = 'Could not load the face model. Check your internet connection and serve the page over http(s), not file://.';
   }
 })();
 
+/* ---------- Upload handling ---------- */
 const drop = $('drop'), fileInput = $('file');
 drop.onclick = () => fileInput.click();
 fileInput.onchange = e => e.target.files[0] && handleFile(e.target.files[0]);
 ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
 ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
 drop.addEventListener('drop', e => e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]));
+$('overlayToggle').onchange = () => lastDraw && lastDraw();
 
 async function handleFile(file) {
   if (!file.type.startsWith('image/')) { $('status').textContent = 'Please choose an image file.'; return; }
-  if (!modelReady) { $('status').textContent = 'Model still loading, try again in a moment.'; return; }
+  if (!landmarker) { $('status').textContent = 'Model still loading, try again in a moment.'; return; }
   $('status').textContent = 'Analyzing…';
   $('result').style.display = 'none';
+
   const img = new Image();
   img.src = URL.createObjectURL(file);
-  await img.decode();
+  try { await img.decode(); } catch { $('status').textContent = 'Could not read that image.'; return; }
 
-  const detection = await faceapi.detectSingleFace(img, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 })).withFaceLandmarks();
   const canvas = $('canvas');
-  const scale = Math.min(1, 900 / img.width);
-  canvas.width = img.width * scale; canvas.height = img.height * scale;
+  const scale = Math.min(1, 1280 / Math.max(img.naturalWidth, img.naturalHeight));
+  const W = Math.round(img.naturalWidth * scale), H = Math.round(img.naturalHeight * scale);
+  canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  $('stage-card').style.display = 'block'; $('stage').style.display = 'block';
+  ctx.drawImage(img, 0, 0, W, H);
+  $('stage-card').style.display = 'block';
 
-  if (!detection) { $('status').textContent = 'No face found. Try a well-lit, front-facing photo.'; return; }
+  const res = landmarker.detect(canvas);
+  if (!res.faceLandmarks || !res.faceLandmarks.length) {
+    $('status').textContent = 'No face found. Try a well-lit, front-facing photo.';
+    return;
+  }
 
-  const pts = detection.landmarks.positions.map(p => ({ x: p.x * scale, y: p.y * scale }));
-  ctx.fillStyle = '#7c5cff';
-  pts.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(2, canvas.width / 300), 0, 7); ctx.fill(); });
+  // use the largest face if several are present
+  const width = lm => Math.max(...lm.map(p => p.x)) - Math.min(...lm.map(p => p.x));
+  const faces = res.faceLandmarks.slice().sort((a, b) => width(b) - width(a));
+  const P = faces[0].map(l => ({ x: l.x * W, y: l.y * H, z: l.z * W }));
 
-  const res = analyze(pts);
-  showResult(res);
+  const out = analyze(P);
+  if (faces.length > 1) out.warnings.push('Multiple faces detected — the largest one was analyzed.');
+
+  lastDraw = () => {
+    ctx.drawImage(img, 0, 0, W, H);
+    if ($('overlayToggle').checked) drawOverlay(ctx, P, W);
+  };
+  lastDraw();
+  showResult(out);
   $('status').textContent = 'Done. Upload another photo to compare.';
 }
 
-/* ---------- Math ---------- */
-const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+/* ---------- Math helpers ---------- */
+const d2 = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: ((a.z || 0) + (b.z || 0)) / 2 });
+const deg = r => r * 180 / Math.PI;
 
-// score 0-100: 100 at the ideal, falling off smoothly with relative error
-function ratioScore(value, ideal, tolerance) {
-  const err = Math.abs(value - ideal) / ideal;
-  return 100 * Math.exp(-Math.pow(err / tolerance, 2));
+// 100 at the ideal; ~61 at one "typical spread" (sd) away; ~14 at two.
+const gauss = (v, ideal, sd) => 100 * Math.exp(-0.5 * Math.pow((v - ideal) / sd, 2));
+
+/* Remove head roll (in-plane) and yaw (left/right turn) using 3D landmarks */
+function frontalize(P) {
+  // roll: level the line between the iris centers
+  const a = P[468], b = P[473];
+  const roll = Math.atan2(b.y - a.y, b.x - a.x);
+  const c = mid(a, b);
+  const cr = Math.cos(-roll), sr = Math.sin(-roll);
+  let Q = P.map(p => {
+    const dx = p.x - c.x, dy = p.y - c.y;
+    return { x: dx * cr - dy * sr, y: dx * sr + dy * cr, z: p.z - c.z };
+  });
+
+  // yaw: angle of the cheek-to-cheek vector in the x–z plane
+  const yaw = Math.atan2(Q[454].z - Q[234].z, Q[454].x - Q[234].x);
+  const applied = Math.max(-0.5, Math.min(0.5, yaw)); // cap correction at ~29°
+  const cy = Math.cos(applied), sy = Math.sin(applied);
+  Q = Q.map(p => ({ x: p.x * cy + p.z * sy, y: p.y, z: -p.x * sy + p.z * cy }));
+  return { Q, rollDeg: deg(roll), yawDeg: deg(yaw) };
 }
 
 const MIRROR_PAIRS = [
-  [0,16],[1,15],[2,14],[3,13],[4,12],[5,11],[6,10],[7,9],
-  [17,26],[18,25],[19,24],[20,23],[21,22],
-  [36,45],[37,44],[38,43],[39,42],[40,47],[41,46],
-  [31,35],[32,34],
-  [48,54],[49,53],[50,52],[59,55],[58,56],[60,64],[61,63],[67,65]
+  [33,263],[133,362],[159,386],[145,374],[468,473],
+  [70,300],[63,293],[105,334],[66,296],[107,336],
+  [234,454],[172,397],[58,288],[132,361],[93,323],
+  [129,358],[98,327],[61,291],[50,280],[205,425],
+  [54,284],[103,332],[21,251]
 ];
+const MIDLINE = [10, 9, 168, 6, 1, 2, 0, 17, 152];
 
 function analyze(P) {
-  // 1. Level the face: rotate so the line between eye centers is horizontal
-  const eyeR = mid(P[36], P[39]), eyeL = mid(P[42], P[45]);
-  const angle = Math.atan2(eyeL.y - eyeR.y, eyeL.x - eyeR.x);
-  const c = mid(eyeR, eyeL), cos = Math.cos(-angle), sin = Math.sin(-angle);
-  const Q = P.map(p => {
-    const dx = p.x - c.x, dy = p.y - c.y;
-    return { x: dx * cos - dy * sin, y: dx * sin + dy * cos };
-  });
+  const { Q, rollDeg, yawDeg } = frontalize(P);
+  const warnings = [];
 
-  const faceW = dist(Q[0], Q[16]);
+  // ---- measurements (frontalized) ----
+  const faceW = d2(Q[234], Q[454]);
+  const eyeWR = d2(Q[33], Q[133]), eyeWL = d2(Q[362], Q[263]);
+  const eyeW = (eyeWR + eyeWL) / 2;
+  const icd = d2(Q[133], Q[362]);                    // inner-corner distance
+  const ipd = d2(Q[468], Q[473]);                    // interpupillary distance
+  const eyeH = (d2(Q[159], Q[145]) + d2(Q[386], Q[374])) / 2;
+  const openness = eyeH / eyeW;
+  const tiltR = deg(Math.atan2(Q[133].y - Q[33].y, Math.abs(Q[33].x - Q[133].x)));
+  const tiltL = deg(Math.atan2(Q[362].y - Q[263].y, Math.abs(Q[263].x - Q[362].x)));
+  const tilt = (tiltR + tiltL) / 2;                  // + = outer corner higher
+  const noseW = d2(Q[129], Q[358]);
+  const mouthW = d2(Q[61], Q[291]);
+  const stomion = mid(Q[13], Q[14]);
+  const middleThird = Q[2].y - Q[9].y;
+  const lowerThird = Q[152].y - Q[2].y;
+  const noseToMouth = stomion.y - Q[2].y;
+  const mouthToChin = Q[152].y - stomion.y;
 
-  // 2. Symmetry: mirror each left point across the midline and measure mismatch
-  const midX = (Q[27].x + Q[8].x + Q[33].x + Q[51].x) / 4;
+  // ---- symmetry ----
+  const midX = MIDLINE.reduce((s, i) => s + Q[i].x, 0) / MIDLINE.length;
   let sum = 0;
   MIRROR_PAIRS.forEach(([a, b]) => {
-    const ax = Q[a].x - midX, bx = midX - Q[b].x;
-    sum += Math.hypot(ax - bx, Q[a].y - Q[b].y);
+    sum += Math.hypot(Q[a].x + Q[b].x - 2 * midX, Q[a].y - Q[b].y);
   });
   const asym = sum / MIRROR_PAIRS.length / faceW;
-  const symmetry = 100 * Math.exp(-Math.pow(asym / 0.05, 2) * 0.7);
 
-  // 3. Proportions
-  const eyeW = (dist(Q[36], Q[39]) + dist(Q[42], Q[45])) / 2;
-  const eyeGap = dist(Q[39], Q[42]);
-  const noseW = dist(Q[31], Q[35]);
-  const mouthW = dist(Q[48], Q[54]);
-  const browY = (Q[19].y + Q[24].y) / 2;
-  const middleThird = Q[33].y - browY;
-  const lowerThird = Q[8].y - Q[33].y;
-  const mouthToChin = Q[8].y - Q[57].y;
-  const noseToMouth = Q[57].y - Q[33].y;
+  // ---- quality checks ----
+  let conf = 100;
+  const rawFaceW = d2(P[234], P[454]);
+  if (rawFaceW < 150) { warnings.push('The face is small in the image — upload a higher-resolution or closer crop.'); conf -= 20; }
+  if (Math.abs(yawDeg) > 25) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — too much to correct reliably. Use a straight-on photo.`); conf -= 35; }
+  else if (Math.abs(yawDeg) > 10) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — it was corrected mathematically, but a straight-on photo is more accurate.`); conf -= 12; }
+  if (Math.abs(rollDeg) > 15) { warnings.push(`Head is tilted ${Math.abs(rollDeg).toFixed(0)}° — corrected, but a level head is better.`); conf -= 5; }
+  if (openness < 0.2) { warnings.push('Eyes look closed or squinting — eye measurements are unreliable. Retake with eyes relaxed and open.'); conf -= 25; }
+  if (d2(Q[13], Q[14]) / faceW > 0.05) { warnings.push('Mouth looks open or smiling widely — mouth and lower-face ratios may be off. Use a neutral expression.'); conf -= 12; }
+  conf = Math.max(10, conf);
 
-  const metrics = [
-    { name: 'Facial symmetry', score: symmetry, weight: 0.35,
-      detail: `Average mirror mismatch: ${(asym * 100).toFixed(1)}% of face width` },
-    { name: 'Eye spacing', score: ratioScore(eyeGap / eyeW, 1.0, 0.3), weight: 0.15,
-      detail: `Gap between eyes ÷ eye width = ${(eyeGap / eyeW).toFixed(2)} (ideal ≈ 1.00)` },
-    { name: 'Nose width', score: ratioScore(noseW / eyeGap, 1.0, 0.3), weight: 0.15,
-      detail: `Nose width ÷ eye gap = ${(noseW / eyeGap).toFixed(2)} (ideal ≈ 1.00)` },
-    { name: 'Mouth vs. nose', score: ratioScore(mouthW / noseW, 1.618, 0.25), weight: 0.15,
-      detail: `Mouth width ÷ nose width = ${(mouthW / noseW).toFixed(2)} (golden ratio 1.62)` },
-    { name: 'Facial thirds', score: ratioScore(lowerThird / middleThird, 1.0, 0.3), weight: 0.10,
-      detail: `Lower ÷ middle face = ${(lowerThird / middleThird).toFixed(2)} (ideal ≈ 1.00)` },
-    { name: 'Lower-face balance', score: ratioScore(mouthToChin / noseToMouth, 2.0, 0.3), weight: 0.10,
-      detail: `Mouth→chin ÷ nose→mouth = ${(mouthToChin / noseToMouth).toFixed(2)} (ideal ≈ 2.00)` }
-  ];
+  // ---- metrics: [name, group, score, weight, detail] ----
+  const m = [];
+  const add = (name, group, score, weight, detail) => m.push({ name, group, score, weight, detail });
 
-  const raw = metrics.reduce((s, m) => s + m.score * m.weight, 0);
-  // gentle curve so typical faces land in a readable range instead of the harsh raw average
-  const total = Math.max(0, Math.min(100, 35 + raw * 0.65));
-  return { total, metrics };
+  add('Facial symmetry', 'Overall', gauss(asym, 0, 0.035), 0.25,
+      `Average left/right mismatch: ${(asym * 100).toFixed(1)}% of face width (ideal 0%)`);
+
+  add('Eye spacing', 'Eyes', gauss(icd / eyeW, 1.0, 0.12), 0.12,
+      `Gap between inner corners ÷ eye width = ${(icd / eyeW).toFixed(2)} (ideal 1.00)`);
+  add('Eye width vs. face', 'Eyes', gauss(faceW / eyeW, 5.0, 0.4), 0.08,
+      `Face width ÷ eye width = ${(faceW / eyeW).toFixed(2)} (classical "fifths" ideal 5.0)`);
+  add('Interpupillary ratio', 'Eyes', gauss(ipd / faceW, 0.46, 0.03), 0.06,
+      `Pupil distance ÷ face width = ${(ipd / faceW).toFixed(2)} (ideal ≈ 0.46)`);
+  add('Canthal tilt', 'Eyes', gauss(tilt, 5, 4), 0.06,
+      `Outer eye corners sit ${tilt >= 0 ? 'higher' : 'lower'} by ${Math.abs(tilt).toFixed(1)}° (ideal ≈ +5°)`);
+  add('Eye openness', 'Eyes', gauss(openness, 0.36, 0.08), 0.04,
+      `Eye height ÷ width = ${openness.toFixed(2)} (ideal ≈ 0.36)`);
+
+  add('Nose width', 'Nose, mouth & thirds', gauss(noseW / icd, 1.0, 0.15), 0.10,
+      `Nose width ÷ eye gap = ${(noseW / icd).toFixed(2)} (ideal 1.00)`);
+  add('Mouth vs. nose', 'Nose, mouth & thirds', gauss(mouthW / noseW, 1.55, 0.2), 0.10,
+      `Mouth width ÷ nose width = ${(mouthW / noseW).toFixed(2)} (ideal ≈ 1.5–1.6)`);
+  add('Facial thirds', 'Nose, mouth & thirds', gauss(lowerThird / middleThird, 1.0, 0.15), 0.10,
+      `Lower ÷ middle face = ${(lowerThird / middleThird).toFixed(2)} (ideal ≈ 1.00)`);
+  add('Lower-face balance', 'Nose, mouth & thirds', gauss(mouthToChin / noseToMouth, 2.0, 0.3), 0.09,
+      `Mouth→chin ÷ nose→mouth = ${(mouthToChin / noseToMouth).toFixed(2)} (ideal ≈ 2.00)`);
+
+  const wsum = m.reduce((s, x) => s + x.weight, 0);
+  const raw = m.reduce((s, x) => s + x.score * x.weight, 0) / wsum;
+  const total = Math.max(0, Math.min(100, 30 + raw * 0.7));
+  return { total, metrics: m, warnings, conf };
 }
 
-function showResult({ total, metrics }) {
+/* ---------- Overlay ---------- */
+function drawOverlay(ctx, P, W) {
+  const lw = Math.max(1.5, W / 450);
+  const line = (a, b, color, dash) => {
+    ctx.beginPath(); ctx.setLineDash(dash || []);
+    ctx.moveTo(P[a].x, P[a].y); ctx.lineTo(P[b].x, P[b].y);
+    ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke(); ctx.setLineDash([]);
+  };
+  const loop = (idx, color) => {
+    ctx.beginPath();
+    idx.forEach((i, k) => k ? ctx.lineTo(P[i].x, P[i].y) : ctx.moveTo(P[i].x, P[i].y));
+    ctx.closePath(); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke();
+  };
+  const dot = (i, color, r) => { ctx.beginPath(); ctx.arc(P[i].x, P[i].y, r || lw * 1.6, 0, 7); ctx.fillStyle = color; ctx.fill(); };
+
+  loop([33,246,161,160,159,158,157,173,133,155,154,153,145,144,163,7], '#7c5cff');
+  loop([362,398,384,385,386,387,388,466,263,249,390,373,374,380,381,382], '#7c5cff');
+  line(33, 133, '#2ecc8f'); line(362, 263, '#2ecc8f');   // eye widths
+  line(133, 362, '#f5d142');                              // inner gap
+  line(234, 454, '#ffffff88', [6, 6]);                    // face width
+  line(129, 358, '#ff7ab8'); line(61, 291, '#ff7ab8');    // nose & mouth width
+  line(10, 152, '#ffffff55', [4, 6]);                     // midline
+  [468, 473, 33, 133, 362, 263, 2, 152].forEach(i => dot(i, '#ffffff'));
+}
+
+/* ---------- Results ---------- */
+function showResult({ total, metrics, warnings, conf }) {
   const t = Math.round(total);
   $('result').style.display = 'block';
   $('scoreNum').textContent = t;
   $('ring').style.setProperty('--p', t);
   const [title, text] =
-    t >= 90 ? ['Exceptional harmony', 'Your proportions and symmetry sit very close to the classical ideals.'] :
-    t >= 80 ? ['High harmony', 'Strong symmetry and well-balanced proportions overall.'] :
-    t >= 70 ? ['Good harmony', 'Most measurements fall near the ideal ratios.'] :
-    t >= 60 ? ['Average harmony', 'A typical mix of ratios — real faces rarely match the ideals exactly.'] :
+    t >= 88 ? ['Exceptional harmony', 'Your proportions and symmetry sit very close to the classical ideals.'] :
+    t >= 78 ? ['High harmony', 'Strong symmetry and well-balanced proportions overall.'] :
+    t >= 66 ? ['Good harmony', 'Most measurements fall near the ideal ratios.'] :
+    t >= 55 ? ['Average harmony', 'A typical mix of ratios — real faces rarely match the ideals exactly.'] :
               ['Unconventional proportions', 'Your ratios differ from the classical ideals, which says nothing about how attractive you are. Photo angle and expression affect this a lot.'];
   $('verdictTitle').textContent = title;
   $('verdictText').textContent = text;
+  $('conf').textContent = `Measurement confidence: ${conf}%`;
 
-  $('metrics').innerHTML = metrics.map(m => `
-    <div class="metric">
-      <div class="top"><span>${m.name}</span><b>${Math.round(m.score)}/100</b></div>
-      <div class="bar"><i data-w="${m.score}"></i></div>
-      <div class="detail">${m.detail}</div>
-    </div>`).join('');
+  $('warnings').innerHTML = warnings.length
+    ? `<div class="warnbox"><b>Photo quality notes</b><ul>${warnings.map(w => `<li>${w}</li>`).join('')}</ul></div>` : '';
+
+  let html = '', group = '';
+  metrics.forEach(x => {
+    if (x.group !== group) { group = x.group; html += `<div class="group">${group}</div>`; }
+    html += `
+      <div class="metric">
+        <div class="top"><span>${x.name}</span><b>${Math.round(x.score)}/100</b></div>
+        <div class="bar"><i data-w="${x.score}"></i></div>
+        <div class="detail">${x.detail}</div>
+      </div>`;
+  });
+  $('metrics').innerHTML = html;
   requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(b => b.style.width = b.dataset.w + '%'));
   $('result').scrollIntoView({ behavior: 'smooth' });
 }
 </script>
 </body>
 </html>
-
