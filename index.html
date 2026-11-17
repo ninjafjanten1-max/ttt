@@ -73,6 +73,69 @@ body{line-height:1.5}
 .forum-wrap{margin:84px 0}.forum-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:24px}.forum-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px}.forum-main,.forum-side{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}.forum-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.forum-category{border:1px solid var(--line);background:transparent;color:var(--muted);padding:9px 12px;border-radius:9px;font-size:11px;font-weight:800}.forum-category.active{background:var(--lime);color:#101510;border-color:var(--lime)}.thread-row{display:grid;grid-template-columns:42px minmax(0,1fr) 70px;gap:12px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line)}.thread-row:last-child{border:0}.thread-avatar{width:38px;height:38px;border-radius:50%;background:#29362f;color:var(--lime);display:grid;place-items:center;font-weight:800}.thread-title{font-size:14px;font-weight:800;display:block}.thread-title:hover{color:var(--lime)}.thread-meta{font:10px 'DM Mono',monospace;color:var(--muted);margin-top:5px}.thread-count{text-align:right;color:var(--muted);font:11px 'DM Mono',monospace}.forum-side h3{margin:0 0 12px}.forum-side p,.forum-side li{font-size:12px;color:var(--muted);line-height:1.8}.forum-side ul{padding-left:18px}.forum-auth{display:grid;gap:9px;margin-bottom:16px}.forum-auth input,.forum-auth textarea,.forum-auth select{width:100%;background:#10140f;border:1px solid var(--line);border-radius:9px;padding:11px;color:var(--text)}.forum-compose{display:grid;gap:9px}.forum-compose textarea{min-height:120px;resize:vertical}.forum-status{font-size:11px;color:var(--lime);min-height:18px}.thread-detail{white-space:pre-wrap;color:#c2cbbb;line-height:1.85;font-size:13px}.reply{border-top:1px solid var(--line);padding:14px 0}.reply b{font-size:11px;color:var(--lime)}.reply p{font-size:12px;line-height:1.8;color:var(--muted);white-space:pre-wrap}.forum-note{font-size:10px;color:var(--muted);line-height:1.7}.forum-side .btn{width:100%}
 @media(max-width:850px){.forum-layout{grid-template-columns:1fr}.forum-side{order:-1}.forum-head{align-items:start;flex-direction:column}}
 
+
+/* NORDMAX forum-first redesign */
+.forum-masthead{display:flex;justify-content:space-between;align-items:center;gap:28px;padding:42px 0 32px;border-bottom:1px solid var(--line)}
+.forum-masthead h1{font-size:clamp(38px,5vw,58px);line-height:.98;margin:12px 0 10px}
+.forum-masthead h1 em{color:var(--lime);font-style:normal}
+.forum-masthead p{font-size:13px;color:var(--muted);max-width:570px;margin:0;line-height:1.7}
+.mast-aside{width:230px;flex-shrink:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:17px;display:grid;gap:9px}
+.mast-aside b{font:10px 'DM Mono',monospace;letter-spacing:.1em}.mast-aside small{font-size:11px;color:var(--muted);line-height:1.6}
+.live-dot,.forum-online i{width:7px;height:7px;background:#8db79b;border-radius:50%;display:inline-block;box-shadow:0 0 0 4px #8db79b1c}
+.forum-wrap{margin:30px 0 76px}
+.forum-head{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;padding-bottom:13px;border-bottom:1px solid var(--line)}
+.forum-head h2{font-size:20px;letter-spacing:-.04em;margin:4px 0}
+.forum-head-actions{display:flex;align-items:center;gap:15px}
+.forum-online{font:9px 'DM Mono',monospace;letter-spacing:.1em;color:var(--muted);display:flex;align-items:center;gap:8px}
+.forum-layout{display:grid;grid-template-columns:218px minmax(0,1fr) 252px;gap:13px;align-items:start}
+.forum-categories,.forum-main,.forum-side{background:var(--panel);border:1px solid var(--line);border-radius:10px;min-width:0}
+.forum-categories{padding:13px 10px}
+.forum-side-label{font:9px 'DM Mono',monospace;letter-spacing:.13em;color:var(--muted);padding:5px 8px 11px}
+#forumCategoryList{display:grid;gap:3px}
+.forum-category{width:100%;display:grid;grid-template-columns:23px minmax(0,1fr);column-gap:8px;align-items:center;text-align:left;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--muted);padding:9px 7px}
+.forum-category>span{grid-row:span 2;font-size:14px;text-align:center;color:var(--lime)}
+.forum-category b{font-size:11px;color:var(--text);font-weight:750}
+.forum-category small{font-size:9px;color:var(--muted);margin-top:2px}
+.forum-category:hover,.forum-category.active{background:#ffffff08;border-color:#ffffff10}
+.forum-category.active b{color:var(--lime)}
+.forum-mini-note{border-top:1px solid var(--line);margin:12px 3px 0;padding:13px 6px 4px}
+.forum-mini-note b{font:9px 'DM Mono',monospace;color:var(--lime);letter-spacing:.08em}
+.forum-mini-note p{font-size:10px;line-height:1.7;color:var(--muted);margin:7px 0 0}
+.forum-main{padding:0 15px 12px}
+.forum-feed-head{height:45px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.forum-feed-head b{font-size:12px}.forum-feed-head span{font:9px 'DM Mono',monospace;color:var(--muted);letter-spacing:.08em}
+.thread-row{grid-template-columns:36px minmax(0,1fr) 55px;gap:10px;padding:14px 2px;border-bottom:1px solid #ffffff0c}
+.thread-avatar{width:32px;height:32px;border-radius:6px;background:#29362f;color:var(--lime);font:700 12px Manrope}
+.thread-title{font-size:12px;line-height:1.5}
+.thread-meta{font-size:9px;display:flex;gap:6px;align-items:center}
+.thread-meta i{font-style:normal;color:#647168}
+.thread-count{border-left:1px solid var(--line);padding-left:10px;display:grid;gap:1px;text-align:center}
+.thread-count b{font-size:13px;color:var(--text);font-family:Manrope}
+.thread-count span{font:8px 'DM Mono',monospace}
+.pin-label{font:8px 'DM Mono',monospace;background:#34463a;color:#c8d8cd;border-radius:3px;padding:3px 4px;vertical-align:1px}
+.forum-side{padding:14px}
+.forum-side-panel{border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:15px}
+.forum-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.forum-stats div{background:#ffffff06;border:1px solid #ffffff0b;border-radius:7px;padding:10px}
+.forum-stats b{display:block;font-size:19px;letter-spacing:-.04em}
+.forum-stats span{font:8px 'DM Mono',monospace;color:var(--muted);letter-spacing:.08em}
+.forum-side h3{font-size:14px;margin:3px 0 6px}
+.forum-auth-copy{font-size:10px;line-height:1.6;color:var(--muted);margin:0 0 12px}
+.forum-auth{gap:7px}
+.forum-auth input,.forum-auth textarea,.forum-auth select,.forum-compose input,.forum-compose textarea,.forum-compose select{font-size:11px;border-radius:6px;padding:10px;background:#0e1310}
+.forum-side .btn{font-size:10px;border-radius:6px;padding:10px}
+.forum-side .btn.secondary{border-radius:6px}
+.forum-compose{gap:7px}
+.forum-compose textarea{min-height:90px}
+.forum-status{font-size:10px}
+.forum-side ul{padding-left:15px;margin:8px 0}
+.forum-side li{font-size:10px;line-height:1.7}
+.forum-note{font-size:9px}
+#forumModal .dialog{border-radius:10px}
+@media(max-width:1050px){.forum-layout{grid-template-columns:190px minmax(0,1fr)}.forum-side{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:15px}.forum-side>hr{display:none}.forum-side-panel{grid-column:1/-1}}
+@media(max-width:700px){.forum-masthead{align-items:stretch;flex-direction:column;padding-top:30px}.mast-aside{width:100%}.forum-layout{grid-template-columns:1fr}.forum-categories{padding:10px}.forum-categories #forumCategoryList{display:flex;overflow:auto;gap:5px;padding-bottom:3px}.forum-category{width:auto;min-width:max-content;display:flex;gap:6px;padding:8px 10px}.forum-category small{display:none}.forum-mini-note{display:none}.forum-side{grid-column:auto;display:block}.forum-side>hr{display:block}.forum-head{align-items:flex-start}.forum-head-actions{gap:8px}.forum-online{display:none}}
+@media(max-width:480px){.forum-main{padding:0 10px 10px}.thread-row{grid-template-columns:30px minmax(0,1fr) 42px;gap:7px}.thread-avatar{width:28px;height:28px}.thread-title{font-size:11px}.thread-meta{flex-wrap:wrap;font-size:8px}.forum-feed-head span{font-size:8px}.forum-masthead h1{font-size:42px}}
+
 </style>
 </head>
 <body>
@@ -80,21 +143,17 @@ body{line-height:1.5}
 <a class="skip-link" href="#bibliotek">Hoppa till innehållet</a>
 <main id="publicApp">
 <div class="shell">
-<section class="hero">
-<div><div class="eyebrow">NORDISK ESTETIK · HÅLLBAR UTVECKLING</div><h1>Bygg din form.<br><em>På dina villkor.</em></h1><p class="lead">En genomarbetad guide till hud, hår, träning och stil. Saklig kunskap, tydliga verktyg och vanor som håller över tid.</p><div class="hero-actions"><a class="btn" href="#bibliotek">Utforska guiderna ↘</a><a class="btn secondary" href="facemath.html">Testa FaceMath</a></div></div>
-<div class="hero-art"><div class="art-index">01 / NORDISK UTVECKLING</div><div class="orb"></div><div class="art-bottom"><strong>Lugn styrka.<br>Tydlig riktning.</strong><span>Bygg långsiktigt. Välj medvetet.</span></div></div>
-</section>
-<div class="stats"><div class="stat"><b>01</b><span>Enkla vanor först</span></div><div class="stat"><b>02</b><span>Råd utan mirakellöften</span></div><div class="stat"><b>03</b><span>Du styr din egen takt</span></div></div>
-
+<section class="forum-masthead"><div><div class="eyebrow">NORDMAX COMMUNITY FORUM</div><h1>Utvecklas.<br><em>Diskutera.</em></h1><p>En mötesplats för genomtänkt självutveckling, utseende, träning och stil. Dela erfarenheter. Ställ bättre frågor.</p></div><div class="mast-aside"><span class="live-dot"></span><b>ÖPPET FORUM</b><small>Delta i diskussionerna eller starta en egen tråd.</small><a class="btn" href="#forum-auth">SKAPA KONTO ↗</a></div></section>
 <section class="forum-wrap" id="forum">
- <div class="forum-head"><div><div class="eyebrow">NORDMAX COMMUNITY</div><h2 style="font-size:38px;letter-spacing:-.06em;margin:8px 0">Forumet.</h2><p class="deep-intro">Diskutera, ställ frågor och dela erfarenheter. Sakligt, respektfullt och utan tomma löften.</p></div><a class="btn" href="#forum-auth">Bli medlem ↗</a></div>
+ <div class="forum-head"><div><div class="eyebrow">BLÄDDRA I GEMENSKAPEN</div><h2>Forumöversikt</h2></div><div class="forum-head-actions"><span class="forum-online"><i></i> DISKUSSIONER</span><a class="btn small" href="#forum-auth">+ NY TRÅD</a></div></div>
  <div class="forum-layout">
+  <aside class="forum-categories"><div class="forum-side-label">FORUMAVDELNINGAR</div><div id="forumCategoryList"><button class="forum-category active" data-forum-category="Alla"><span>◈</span><b>Alla diskussioner</b><small>Senaste från forumet</small></button><button class="forum-category" data-forum-category="Utseende"><span>◉</span><b>Utseende</b><small>Utseende och helhetsintryck</small></button><button class="forum-category" data-forum-category="Hud & hår"><span>✳</span><b>Hud & hår</b><small>Hudvård och hårvård</small></button><button class="forum-category" data-forum-category="Träning"><span>⌁</span><b>Träning</b><small>Styrka och återhämtning</small></button><button class="forum-category" data-forum-category="Stil"><span>◇</span><b>Stil</b><small>Kläder och personlig stil</small></button><button class="forum-category" data-forum-category="Frågor"><span>?</span><b>Frågor</b><small>Be om råd och perspektiv</small></button><button class="forum-category" data-forum-category="Framsteg"><span>↗</span><b>Framsteg</b><small>Vanor och utveckling</small></button><button class="forum-category" data-forum-category="Övrigt"><span>···</span><b>Övrigt</b><small>Övriga samtal</small></button></div><div class="forum-mini-note"><b>VÄLKOMMEN TILL NORDMAX</b><p>Håll diskussionerna sakliga. Respektera andra medlemmar och publicera aldrig privata bilder eller personuppgifter.</p></div></aside>
   <div class="forum-main">
-   <div class="forum-toolbar" id="forumCategories"><button class="forum-category active" data-forum-category="Alla">Alla ämnen</button><button class="forum-category" data-forum-category="Utseende">Utseende</button><button class="forum-category" data-forum-category="Hud & hår">Hud & hår</button><button class="forum-category" data-forum-category="Träning">Träning</button><button class="forum-category" data-forum-category="Stil">Stil</button><button class="forum-category" data-forum-category="Frågor">Frågor</button><button class="forum-category" data-forum-category="Framsteg">Framsteg</button><button class="forum-category" data-forum-category="Övrigt">Övrigt</button></div>
-   <div id="forumThreads"><div class="empty">Hämtar diskussioner…</div></div>
+   <div class="forum-feed-head"><b id="forumFeedTitle">Alla diskussioner</b><span>SENASTE AKTIVITET</span></div><div id="forumThreads"><div class="empty">Hämtar diskussioner…</div></div>
   </div>
   <aside class="forum-side">
-   <div id="forum-auth"><div class="eyebrow">MEDLEMSKAP</div><h3 id="forumAuthTitle">Logga in eller skapa konto</h3>
+   <div class="forum-side-panel"><div class="forum-side-label">SNABBÖVERSIKT</div><div class="forum-stats"><div><b id="forumThreadStat">—</b><span>TRÅDAR</span></div><div><b id="forumReplyStat">—</b><span>SVAR</span></div></div></div>
+   <div id="forum-auth"><div class="eyebrow">MEDLEMSKAP</div><h3 id="forumAuthTitle">Logga in eller skapa konto</h3><p class="forum-auth-copy">Bli en del av samtalet. Ett konto krävs för att skriva och svara.</p>
     <form class="forum-auth" id="forumAuthForm"><input id="forumEmail" type="email" placeholder="E-postadress" required><input id="forumPassword" type="password" placeholder="Lösenord (minst 8 tecken)" minlength="8" required><input id="forumUsername" placeholder="Användarnamn (vid registrering)" minlength="3" maxlength="24"><button class="btn" id="forumAuthSubmit">Skapa konto</button><button class="btn secondary" type="button" id="forumToggleAuth">Jag har redan ett konto</button></form>
     <div class="forum-status" id="forumAuthStatus"></div><button class="btn secondary hide" id="forumLogout">Logga ut</button>
    </div>
@@ -214,8 +273,8 @@ let forumUser=null,forumCategory='Alla',forumThreads=[],forumSignup=true;
 const fs=(id,msg)=>{const n=$(id);if(n)n.textContent=msg;};
 function forumAuthView(){$('forumAuthTitle').textContent=forumUser?'Du är inloggad':'Logga in eller skapa konto';$('forumAuthForm').classList.toggle('hide',!!forumUser);$('forumComposer').classList.toggle('hide',!forumUser);$('forumLogout').classList.toggle('hide',!forumUser);$('forumAuthStatus').textContent=forumUser?'Inloggad som '+(forumUser.email||'medlem'):'';}
 async function ensureForumProfile(){if(!forumUser)return;const {data}=await client.from('member_profiles').select('id').eq('id',forumUser.id).maybeSingle();if(!data){const base=(forumUser.user_metadata?.forum_username||forumUser.email?.split('@')[0]||'medlem').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,18)||'medlem';await client.from('member_profiles').insert({id:forumUser.id,username:base+'_'+forumUser.id.slice(0,4)});}}
-async function forumLoad(){const {data,error}=await client.from('forum_threads').select('id,user_id,category,title,body,created_at,pinned').order('pinned',{ascending:false}).order('created_at',{ascending:false}).limit(60);if(error){$('forumThreads').innerHTML='<div class="empty">Forumet kunde inte laddas. Databasen kan behöva uppdateras.</div>';return;}forumThreads=data||[];const ids=forumThreads.map(t=>t.id),uids=[...new Set(forumThreads.map(t=>t.user_id))];let counts={},names={};if(ids.length){const {data:r}=await client.from('forum_replies').select('thread_id').in('thread_id',ids);(r||[]).forEach(x=>counts[x.thread_id]=(counts[x.thread_id]||0)+1);}if(uids.length){const {data:p}=await client.from('member_profiles').select('id,username').in('id',uids);(p||[]).forEach(x=>names[x.id]=x.username);}const list=forumThreads.filter(t=>forumCategory==='Alla'||t.category===forumCategory);$('forumThreads').innerHTML=list.length?list.map(t=>{const n=names[t.user_id]||'Medlem';return '<article class="thread-row"><div class="thread-avatar">'+esc(n[0].toUpperCase())+'</div><div><a class="thread-title" href="#" data-thread="'+esc(t.id)+'">'+(t.pinned?'✦ ':'')+esc(t.title)+'</a><div class="thread-meta">'+esc(t.category)+' · '+esc(n)+' · '+new Date(t.created_at).toLocaleDateString('sv-SE')+'</div></div><div class="thread-count">'+(counts[t.id]||0)+' svar</div></article>';}).join(''):'<div class="empty">Inga trådar här ännu. Starta den första diskussionen.</div>';}
-$('forumCategories').addEventListener('click',e=>{const b=e.target.closest('[data-forum-category]');if(!b)return;forumCategory=b.dataset.forumCategory;document.querySelectorAll('[data-forum-category]').forEach(x=>x.classList.toggle('active',x===b));forumLoad();});
+async function forumLoad(){const {data,error}=await client.from('forum_threads').select('id,user_id,category,title,body,created_at,pinned').order('pinned',{ascending:false}).order('created_at',{ascending:false}).limit(60);if(error){$('forumThreads').innerHTML='<div class="empty">Forumet kunde inte laddas. Databasen kan behöva uppdateras.</div>';return;}forumThreads=data||[];const ids=forumThreads.map(t=>t.id),uids=[...new Set(forumThreads.map(t=>t.user_id))];let counts={},names={};if(ids.length){const {data:r}=await client.from('forum_replies').select('thread_id').in('thread_id',ids);(r||[]).forEach(x=>counts[x.thread_id]=(counts[x.thread_id]||0)+1);}if(uids.length){const {data:p}=await client.from('member_profiles').select('id,username').in('id',uids);(p||[]).forEach(x=>names[x.id]=x.username);}const list=forumThreads.filter(t=>forumCategory==='Alla'||t.category===forumCategory);$('forumThreadStat').textContent=forumThreads.length;$('forumReplyStat').textContent=Object.values(counts).reduce((a,b)=>a+b,0);$('forumFeedTitle').textContent=forumCategory==='Alla'?'Alla diskussioner':forumCategory;$('forumThreads').innerHTML=list.length?list.map(t=>{const n=names[t.user_id]||'Medlem';return '<article class="thread-row"><div class="thread-avatar">'+esc(n.slice(0,1).toUpperCase())+'</div><div class="thread-main-copy"><a class="thread-title" href="#" data-thread="'+esc(t.id)+'">'+(t.pinned?'<span class="pin-label">FÄST</span> ':'')+esc(t.title)+'</a><div class="thread-meta"><span>'+esc(t.category)+'</span><i>·</i><span>'+esc(n)+'</span><i>·</i><time>'+new Date(t.created_at).toLocaleDateString('sv-SE')+'</time></div></div><div class="thread-count"><b>'+(counts[t.id]||0)+'</b><span>SVAR</span></div></article>';}).join(''):'<div class="empty">Inga trådar här ännu. Starta den första diskussionen.</div>';}
+$('forumCategoryList').addEventListener('click',e=>{const b=e.target.closest('[data-forum-category]');if(!b)return;forumCategory=b.dataset.forumCategory;document.querySelectorAll('[data-forum-category]').forEach(x=>x.classList.toggle('active',x===b));forumLoad();});
 $('forumToggleAuth').onclick=()=>{forumSignup=!forumSignup;$('forumAuthSubmit').textContent=forumSignup?'Skapa konto':'Logga in';$('forumUsername').classList.toggle('hide',!forumSignup);$('forumToggleAuth').textContent=forumSignup?'Jag har redan ett konto':'Skapa nytt konto';$('forumAuthTitle').textContent=forumSignup?'Skapa medlemskonto':'Logga in';};
 $('forumAuthForm').addEventListener('submit',async e=>{e.preventDefault();const email=$('forumEmail').value.trim(),password=$('forumPassword').value;fs('forumAuthStatus',forumSignup?'Skapar konto…':'Loggar in…');if(forumSignup){const username=$('forumUsername').value.trim();if(username.length<3){fs('forumAuthStatus','Användarnamnet måste vara minst 3 tecken.');return;}const {data,error}=await client.auth.signUp({email,password,options:{data:{forum_username:username}}});if(error){fs('forumAuthStatus',error.message);return;}if(data.session){forumUser=data.user;const {error:pe}=await client.from('member_profiles').upsert({id:forumUser.id,username});if(pe){fs('forumAuthStatus',pe.message);return;}forumAuthView();}else fs('forumAuthStatus','Kontot är skapat. Bekräfta e-postadressen och logga sedan in.');}else{const {data,error}=await client.auth.signInWithPassword({email,password});if(error){fs('forumAuthStatus',error.message);return;}forumUser=data.user;await ensureForumProfile();forumAuthView();}});
 $('forumLogout').onclick=async()=>{await client.auth.signOut();forumUser=null;forumAuthView();};
