@@ -4,10 +4,12 @@ Nordisk kunskapsplattform för hållbar utveckling inom hud, hår, träning, sö
 
 ## Delar
 
-- `index.html`: NORDMAX-startsida, innehållsbibliotek och administratörsgränssnitt.
+- `index.html`: NORDMAX-startsida, communityforum, innehållsbibliotek och administratörsgränssnitt.
 - `facemath.html`: FaceMath, ett experimentellt verktyg för förenklade geometriska ansiktsmätningar.
 - Startsidan innehåller fördjupade kunskapsguider, säkerhetsinformation och en stegvis handlingsplan.
-- Supabase: innehållsdatabas, inloggning och bildlagring.
+- Supabase: innehållsdatabas, medlemskonton, forumtrådar, svar, inloggning och bildlagring.
+- Forumet har ämneskategorier, medlemsprofiler, trådskapande och svar. Forumfunktionerna kräver medlemskonto; läsning är öppen.
+- Forumtabellerna `member_profiles`, `forum_threads` och `forum_replies` skyddas med RLS. Medlemmar kan bara skapa och ändra egna profiler/inlägg enligt respektive policy.
 
 ## Publicering
 
