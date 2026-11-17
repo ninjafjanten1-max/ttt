@@ -68,10 +68,15 @@ body{line-height:1.5}
 .signature{display:block;text-align:right;font:9px 'DM Mono',monospace;letter-spacing:.09em;text-transform:lowercase;color:#66705f;margin-top:14px}
 @media(max-width:800px){.topic-grid{grid-template-columns:1fr}.plan-grid{grid-template-columns:1fr}}
 
+
+/* NORDMAX community forum */
+.forum-wrap{margin:84px 0}.forum-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:24px}.forum-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px}.forum-main,.forum-side{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}.forum-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.forum-category{border:1px solid var(--line);background:transparent;color:var(--muted);padding:9px 12px;border-radius:9px;font-size:11px;font-weight:800}.forum-category.active{background:var(--lime);color:#101510;border-color:var(--lime)}.thread-row{display:grid;grid-template-columns:42px minmax(0,1fr) 70px;gap:12px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line)}.thread-row:last-child{border:0}.thread-avatar{width:38px;height:38px;border-radius:50%;background:#29362f;color:var(--lime);display:grid;place-items:center;font-weight:800}.thread-title{font-size:14px;font-weight:800;display:block}.thread-title:hover{color:var(--lime)}.thread-meta{font:10px 'DM Mono',monospace;color:var(--muted);margin-top:5px}.thread-count{text-align:right;color:var(--muted);font:11px 'DM Mono',monospace}.forum-side h3{margin:0 0 12px}.forum-side p,.forum-side li{font-size:12px;color:var(--muted);line-height:1.8}.forum-side ul{padding-left:18px}.forum-auth{display:grid;gap:9px;margin-bottom:16px}.forum-auth input,.forum-auth textarea,.forum-auth select{width:100%;background:#10140f;border:1px solid var(--line);border-radius:9px;padding:11px;color:var(--text)}.forum-compose{display:grid;gap:9px}.forum-compose textarea{min-height:120px;resize:vertical}.forum-status{font-size:11px;color:var(--lime);min-height:18px}.thread-detail{white-space:pre-wrap;color:#c2cbbb;line-height:1.85;font-size:13px}.reply{border-top:1px solid var(--line);padding:14px 0}.reply b{font-size:11px;color:var(--lime)}.reply p{font-size:12px;line-height:1.8;color:var(--muted);white-space:pre-wrap}.forum-note{font-size:10px;color:var(--muted);line-height:1.7}.forum-side .btn{width:100%}
+@media(max-width:850px){.forum-layout{grid-template-columns:1fr}.forum-side{order:-1}.forum-head{align-items:start;flex-direction:column}}
+
 </style>
 </head>
 <body>
-<header class="topbar"><div class="shell nav"><a class="brand" href="#">NORD<span>MAX</span></a><nav class="links"><a href="#bibliotek">Bibliotek</a><a href="#kunskap">Kunskap</a><a href="#plan">Plan</a><a href="facemath.html">FaceMath</a><a class="admin-link" href="#admin" id="adminNav">Admin ↗</a></nav></div></header>
+<header class="topbar"><div class="shell nav"><a class="brand" href="#">NORD<span>MAX</span></a><nav class="links"><a href="#forum">Forum</a><a href="#bibliotek">Guider</a><a href="#kunskap">Kunskap</a><a href="#plan">Plan</a><a href="facemath.html">FaceMath</a><a class="admin-link" href="#admin" id="adminNav">Admin ↗</a></nav></div></header>
 <a class="skip-link" href="#bibliotek">Hoppa till innehållet</a>
 <main id="publicApp">
 <div class="shell">
@@ -80,6 +85,27 @@ body{line-height:1.5}
 <div class="hero-art"><div class="art-index">01 / NORDISK UTVECKLING</div><div class="orb"></div><div class="art-bottom"><strong>Lugn styrka.<br>Tydlig riktning.</strong><span>Bygg långsiktigt. Välj medvetet.</span></div></div>
 </section>
 <div class="stats"><div class="stat"><b>01</b><span>Enkla vanor först</span></div><div class="stat"><b>02</b><span>Råd utan mirakellöften</span></div><div class="stat"><b>03</b><span>Du styr din egen takt</span></div></div>
+
+<section class="forum-wrap" id="forum">
+ <div class="forum-head"><div><div class="eyebrow">NORDMAX COMMUNITY</div><h2 style="font-size:38px;letter-spacing:-.06em;margin:8px 0">Forumet.</h2><p class="deep-intro">Diskutera, ställ frågor och dela erfarenheter. Sakligt, respektfullt och utan tomma löften.</p></div><a class="btn" href="#forum-auth">Bli medlem ↗</a></div>
+ <div class="forum-layout">
+  <div class="forum-main">
+   <div class="forum-toolbar" id="forumCategories"><button class="forum-category active" data-forum-category="Alla">Alla ämnen</button><button class="forum-category" data-forum-category="Utseende">Utseende</button><button class="forum-category" data-forum-category="Hud & hår">Hud & hår</button><button class="forum-category" data-forum-category="Träning">Träning</button><button class="forum-category" data-forum-category="Stil">Stil</button><button class="forum-category" data-forum-category="Frågor">Frågor</button><button class="forum-category" data-forum-category="Framsteg">Framsteg</button><button class="forum-category" data-forum-category="Övrigt">Övrigt</button></div>
+   <div id="forumThreads"><div class="empty">Hämtar diskussioner…</div></div>
+  </div>
+  <aside class="forum-side">
+   <div id="forum-auth"><div class="eyebrow">MEDLEMSKAP</div><h3 id="forumAuthTitle">Logga in eller skapa konto</h3>
+    <form class="forum-auth" id="forumAuthForm"><input id="forumEmail" type="email" placeholder="E-postadress" required><input id="forumPassword" type="password" placeholder="Lösenord (minst 8 tecken)" minlength="8" required><input id="forumUsername" placeholder="Användarnamn (vid registrering)" minlength="3" maxlength="24"><button class="btn" id="forumAuthSubmit">Skapa konto</button><button class="btn secondary" type="button" id="forumToggleAuth">Jag har redan ett konto</button></form>
+    <div class="forum-status" id="forumAuthStatus"></div><button class="btn secondary hide" id="forumLogout">Logga ut</button>
+   </div>
+   <div id="forumComposer" class="hide"><div class="eyebrow">NY DISKUSSION</div><h3>Starta en tråd</h3><form class="forum-compose" id="threadForm"><select id="threadCategory"><option>Utseende</option><option>Hud & hår</option><option>Träning</option><option>Stil</option><option>Frågor</option><option>Framsteg</option><option>Övrigt</option></select><input id="threadTitle" placeholder="Rubrik" minlength="8" maxlength="140" required><textarea id="threadBody" placeholder="Vad vill du diskutera? Skriv tydligt och respektfullt." minlength="20" maxlength="12000" required></textarea><button class="btn">Publicera tråd</button></form><div class="forum-status" id="threadStatus"></div></div>
+   <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+   <div class="eyebrow">GEMENSKAPENS REGLER</div><h3>Håll nivån hög.</h3><ul><li>Respektera andra och deras gränser.</li><li>Publicera aldrig privata bilder eller personuppgifter.</li><li>Ingen mobbning, trakasserier eller hets.</li><li>Inga farliga råd om läkemedel, hormoner eller extrema dieter.</li><li>Forumet ersätter inte vård eller sakkunnig rådgivning.</li></ul><p class="forum-note">Nya konton kan skriva direkt. Inlägg kan rapporteras till administratören via webbplatsens kontaktväg när sådan finns.</p>
+  </aside>
+ </div>
+</section>
+<div class="modal" id="forumModal"><article class="dialog"><button class="close" id="forumClose">×</button><div id="forumDetail"></div></article></div>
+
 <section id="bibliotek">
 <div class="section-head"><div><div class="eyebrow">KUNSKAPSBIBLIOTEK</div><h2>Hitta din nästa förbättring.</h2></div><p>Välj ett område och börja med en sak. Du behöver inte göra om hela livet på en gång.</p></div>
 <div class="filters" id="filters"><button class="chip active" data-filter="Alla">Alla</button><button class="chip" data-filter="Hud">Hud</button><button class="chip" data-filter="Hår">Hår</button><button class="chip" data-filter="Stil">Stil</button><button class="chip" data-filter="Vardag">Vardag</button><button class="chip" data-filter="Verktyg">Verktyg</button><input class="search" id="search" placeholder="Sök bland innehållet…"></div>
