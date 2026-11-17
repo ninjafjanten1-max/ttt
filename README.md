@@ -1,12 +1,12 @@
-# LOOKSMAX
+# NORDMAX
 
-Kunskapswebbplats för hållbara vanor kring hud, hår, träning, sömn, kost, stil och ansiktsproportioner. Innehållsbiblioteket hämtar publicerade artiklar från Supabase och har ett inbyggt administrationsgränssnitt.
+Nordisk kunskapsplattform för hållbar utveckling inom hud, hår, träning, sömn, kost, stil och ansiktsproportioner. Varumärket använder en mörk, exklusiv och avskalad nordisk form. Innehållsbiblioteket hämtar publicerade artiklar från Supabase och har ett inbyggt administrationsgränssnitt.
 
 ## Delar
 
-- `index.html`: startsida, innehållsbibliotek och administratörsgränssnitt.
+- `index.html`: NORDMAX-startsida, innehållsbibliotek och administratörsgränssnitt.
 - `facemath.html`: FaceMath, ett experimentellt verktyg för förenklade geometriska ansiktsmätningar.
-- Startsidan innehåller även fördjupade kunskapsguider, källor, säkerhetsinformation och en stegvis handlingsplan.
+- Startsidan innehåller fördjupade kunskapsguider, säkerhetsinformation och en stegvis handlingsplan.
 - Supabase: innehållsdatabas, inloggning och bildlagring.
 
 ## Publicering
@@ -42,4 +42,4 @@ FaceMath körs i webbläsaren. Dess resultat är ungefärliga geometriska mätni
 
 ## Redaktionell information
 
-Kunskapsinnehållet är allmän vägledning och ersätter inte individuell bedömning av legitimerad vårdpersonal. FaceMath är inte diagnostik eller ett vetenskapligt mått på attraktivitet. Den lilla texten "doktor roman kelder" längst ned är uttryckligen märkt som en fiktiv signatur och ska inte uppfattas som en verklig medicinsk yrkestitel.
+Kunskapsinnehållet är allmän vägledning och ersätter inte individuell bedömning av legitimerad vårdpersonal. FaceMath är inte diagnostik eller ett vetenskapligt mått på attraktivitet. Den lilla signaturen längst ned anger att webbplatsen är grundad av Roman Kelder. Ingen medicinsk yrkestitel påstås.
