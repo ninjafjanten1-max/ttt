@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FaceMath – Facial Harmony Rater</title>
+<title>FaceMath – mått och ansiktsproportioner</title>
 <style>
+  :root { color-scheme:dark; }
   :root { --bg:#0f1117; --card:#181b24; --text:#e8eaf0; --muted:#8b91a3; --accent:#7c5cff; --good:#2ecc8f; --warn:#f5a623; }
   * { box-sizing:border-box; }
   body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
@@ -36,31 +37,35 @@
   .conf { font-size:.85rem; color:var(--muted); margin-top:10px; }
   .note { font-size:.8rem; color:var(--muted); line-height:1.55; }
   .note ul { margin:6px 0 0 18px; padding:0; }
+  a{color:var(--accent)}button,input{font:inherit} :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .back{display:inline-flex;margin:0 0 20px;color:var(--muted);text-decoration:none;font-size:.9rem}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <a class="back" href="index.html">← Tillbaka till LOOKSMAX</a>
   <h1>FaceMath</h1>
-  <p class="sub">Upload a photo and get a mathematical facial-harmony score — 3D landmark analysis, run entirely in your browser.</p>
+  <p class="sub">Ladda upp ett foto för att se geometriska mått och jämförelser med några klassiska proportioner. Analysen körs direkt i din webbläsare.</p>
 
   <div class="card">
-    <div id="drop">📷 Click or drag a front-facing photo here</div>
+    <div id="drop">📷 Klicka eller dra hit ett foto rakt framifrån</div>
     <input type="file" id="file" accept="image/*" hidden>
-    <div id="status">Loading face model…</div>
+    <div id="status">Laddar ansiktsmodellen…</div>
   </div>
 
   <div class="card note">
-    <h3>For accurate results</h3>
+    <h3>För bättre mätunderlag</h3>
     <ul>
-      <li>Look straight at the camera, chin level, neutral expression, mouth closed, eyes open.</li>
-      <li>Avoid close-up selfies (wide-angle lenses distort eye and nose ratios). Shoot from ~1–2 m, or crop a zoomed photo.</li>
-      <li>No glasses, hair over the eyes or brows, heavy shadows, or filters.</li>
+      <li>Titta rakt in i kameran med huvudet upprätt, avslappnat ansikte, stängd mun och öppna ögon.</li>
+      <li>Undvik närbilder och vidvinkelbilder eftersom de kan förvränga ögonens och näsans mått. Fotografera gärna från cirka 1–2 meters avstånd.</li>
+      <li>Undvik glasögon, hår framför ögon eller ögonbryn, hårda skuggor och bildfilter.</li>
     </ul>
   </div>
 
   <div class="card" id="stage-card" style="display:none">
     <div id="stage"><canvas id="canvas"></canvas></div>
-    <label class="toggle"><input type="checkbox" id="overlayToggle" checked> Show measurement overlay</label>
+    <label class="toggle"><input type="checkbox" id="overlayToggle" checked> Visa mätningslinjer</label>
   </div>
 
   <div class="card" id="result">
@@ -77,13 +82,13 @@
   </div>
 
   <div class="card note">
-    <b>How it works:</b> A 478-point face-mesh model (MediaPipe) locates your eye corners, irises, nose, mouth and jaw in 3D.
+    <b>Så fungerar det:</b> En ansiktsmodell med 478 punkter (MediaPipe) uppskattar bland annat ögonvrår, iris, näsa, mun och käklinje i tre dimensioner.
     The app first <i>frontalizes</i> the face — it removes head roll and left/right turn using the 3D landmarks, so a slightly turned
     head no longer squashes the eye ratios. It then measures symmetry around the facial midline and compares key proportions
     (eye spacing, eye width vs. face width, canthal tilt, nose, mouth, facial thirds) to classical ideals such as
-    "one eye-width apart" and the golden ratio.<br><br>
-    <b>Important:</b> this is a fun math toy, not a measure of your worth or real-world attractiveness. Attractiveness depends on
-    expression, skin, style, culture, personality and much more. Your photo never leaves your device.
+    ”ett ögonmåtts avstånd” och det gyllene snittet.<br><br>
+    <b>Viktigt:</b> det här är ett förenklat mätverktyg – inte ett mått på ditt värde eller hur attraktiv du är. Utseende och hur människor uppfattas påverkas av
+    uttryck, hud, stil, kultur, personlighet och mycket annat. Fotot lämnar inte din enhet.
   </div>
 </div>
 
@@ -103,10 +108,10 @@ let landmarker = null, lastDraw = null;
       runningMode: "IMAGE",
       numFaces: 2
     });
-    $('status').textContent = 'Model ready. Upload a clear, front-facing photo.';
+    $('status').textContent = 'Modellen är redo. Ladda upp ett tydligt foto rakt framifrån.';
   } catch (e) {
     console.error(e);
-    $('status').textContent = 'Could not load the face model. Check your internet connection and serve the page over http(s), not file://.';
+    $('status').textContent = 'Det gick inte att ladda ansiktsmodellen. Kontrollera internetanslutningen och öppna sidan via http(s), inte som en lokal fil.';
   }
 })();
 
@@ -120,14 +125,15 @@ drop.addEventListener('drop', e => e.dataTransfer.files[0] && handleFile(e.dataT
 $('overlayToggle').onchange = () => lastDraw && lastDraw();
 
 async function handleFile(file) {
-  if (!file.type.startsWith('image/')) { $('status').textContent = 'Please choose an image file.'; return; }
-  if (!landmarker) { $('status').textContent = 'Model still loading, try again in a moment.'; return; }
-  $('status').textContent = 'Analyzing…';
+  if (!file.type.startsWith('image/')) { $('status').textContent = 'Välj en bildfil.'; return; }
+  if (!landmarker) { $('status').textContent = 'Modellen laddas fortfarande. Försök igen om en liten stund.'; return; }
+  $('status').textContent = 'Analyserar…';
   $('result').style.display = 'none';
 
   const img = new Image();
-  img.src = URL.createObjectURL(file);
-  try { await img.decode(); } catch { $('status').textContent = 'Could not read that image.'; return; }
+  const objectUrl = URL.createObjectURL(file);
+  img.src = objectUrl;
+  try { await img.decode(); } catch { URL.revokeObjectURL(objectUrl); $('status').textContent = 'Bilden kunde inte läsas.'; return; }
 
   const canvas = $('canvas');
   const scale = Math.min(1, 1280 / Math.max(img.naturalWidth, img.naturalHeight));
@@ -139,7 +145,7 @@ async function handleFile(file) {
 
   const res = landmarker.detect(canvas);
   if (!res.faceLandmarks || !res.faceLandmarks.length) {
-    $('status').textContent = 'No face found. Try a well-lit, front-facing photo.';
+    $('status').textContent = 'Inget ansikte hittades. Försök med ett välbelyst foto rakt framifrån.';
     return;
   }
 
@@ -149,7 +155,7 @@ async function handleFile(file) {
   const P = faces[0].map(l => ({ x: l.x * W, y: l.y * H, z: l.z * W }));
 
   const out = analyze(P);
-  if (faces.length > 1) out.warnings.push('Multiple faces detected — the largest one was analyzed.');
+  if (faces.length > 1) out.warnings.push('Flera ansikten hittades – det största analyserades.');
 
   lastDraw = () => {
     ctx.drawImage(img, 0, 0, W, H);
@@ -157,7 +163,8 @@ async function handleFile(file) {
   };
   lastDraw();
   showResult(out);
-  $('status').textContent = 'Done. Upload another photo to compare.';
+  URL.revokeObjectURL(objectUrl);
+  $('status').textContent = 'Klart. Ladda upp ett nytt foto om du vill jämföra.';
 }
 
 /* ---------- Math helpers ---------- */
@@ -235,7 +242,7 @@ function analyze(P) {
   if (Math.abs(yawDeg) > 25) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — too much to correct reliably. Use a straight-on photo.`); conf -= 35; }
   else if (Math.abs(yawDeg) > 10) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — it was corrected mathematically, but a straight-on photo is more accurate.`); conf -= 12; }
   if (Math.abs(rollDeg) > 15) { warnings.push(`Head is tilted ${Math.abs(rollDeg).toFixed(0)}° — corrected, but a level head is better.`); conf -= 5; }
-  if (openness < 0.2) { warnings.push('Eyes look closed or squinting — eye measurements are unreliable. Retake with eyes relaxed and open.'); conf -= 25; }
+  if (openness < 0.2) { warnings.push('Ögon look closed or squinting — eye measurements are unreliable. Retake with eyes relaxed and open.'); conf -= 25; }
   if (d2(Q[13], Q[14]) / faceW > 0.05) { warnings.push('Mouth looks open or smiling widely — mouth and lower-face ratios may be off. Use a neutral expression.'); conf -= 12; }
   conf = Math.max(10, conf);
 
@@ -243,27 +250,27 @@ function analyze(P) {
   const m = [];
   const add = (name, group, score, weight, detail) => m.push({ name, group, score, weight, detail });
 
-  add('Facial symmetry', 'Overall', gauss(asym, 0, 0.035), 0.25,
-      `Average left/right mismatch: ${(asym * 100).toFixed(1)}% of face width (ideal 0%)`);
+  add('Ansiktssymmetri', 'Helhet', gauss(asym, 0, 0.035), 0.25,
+      `Genomsnittlig skillnad mellan höger och vänster sida: ${(asym * 100).toFixed(1)}% of face width (ideal 0%)`);
 
-  add('Eye spacing', 'Eyes', gauss(icd / eyeW, 1.0, 0.12), 0.12,
+  add('Avstånd mellan ögonen', 'Ögon', gauss(icd / eyeW, 1.0, 0.12), 0.12,
       `Gap between inner corners ÷ eye width = ${(icd / eyeW).toFixed(2)} (ideal 1.00)`);
-  add('Eye width vs. face', 'Eyes', gauss(faceW / eyeW, 5.0, 0.4), 0.08,
+  add('Ögonbredd i förhållande till ansiktet', 'Ögon', gauss(faceW / eyeW, 5.0, 0.4), 0.08,
       `Face width ÷ eye width = ${(faceW / eyeW).toFixed(2)} (classical "fifths" ideal 5.0)`);
-  add('Interpupillary ratio', 'Eyes', gauss(ipd / faceW, 0.46, 0.03), 0.06,
+  add('Avstånd mellan pupiller', 'Ögon', gauss(ipd / faceW, 0.46, 0.03), 0.06,
       `Pupil distance ÷ face width = ${(ipd / faceW).toFixed(2)} (ideal ≈ 0.46)`);
-  add('Canthal tilt', 'Eyes', gauss(tilt, 5, 4), 0.06,
+  add('Ögonvrårnas lutning', 'Ögon', gauss(tilt, 5, 4), 0.06,
       `Outer eye corners sit ${tilt >= 0 ? 'higher' : 'lower'} by ${Math.abs(tilt).toFixed(1)}° (ideal ≈ +5°)`);
-  add('Eye openness', 'Eyes', gauss(openness, 0.36, 0.08), 0.04,
+  add('Ögonöppning', 'Ögon', gauss(openness, 0.36, 0.08), 0.04,
       `Eye height ÷ width = ${openness.toFixed(2)} (ideal ≈ 0.36)`);
 
-  add('Nose width', 'Nose, mouth & thirds', gauss(noseW / icd, 1.0, 0.15), 0.10,
-      `Nose width ÷ eye gap = ${(noseW / icd).toFixed(2)} (ideal 1.00)`);
-  add('Mouth vs. nose', 'Nose, mouth & thirds', gauss(mouthW / noseW, 1.55, 0.2), 0.10,
+  add('Näsans bredd', 'Näsa, mun och tredjedelar', gauss(noseW / icd, 1.0, 0.15), 0.10,
+      `Näsans bredd ÷ eye gap = ${(noseW / icd).toFixed(2)} (ideal 1.00)`);
+  add('Mun i förhållande till näsa', 'Näsa, mun och tredjedelar', gauss(mouthW / noseW, 1.55, 0.2), 0.10,
       `Mouth width ÷ nose width = ${(mouthW / noseW).toFixed(2)} (ideal ≈ 1.5–1.6)`);
-  add('Facial thirds', 'Nose, mouth & thirds', gauss(lowerThird / middleThird, 1.0, 0.15), 0.10,
+  add('Ansiktets tredjedelar', 'Näsa, mun och tredjedelar', gauss(lowerThird / middleThird, 1.0, 0.15), 0.10,
       `Lower ÷ middle face = ${(lowerThird / middleThird).toFixed(2)} (ideal ≈ 1.00)`);
-  add('Lower-face balance', 'Nose, mouth & thirds', gauss(mouthToChin / noseToMouth, 2.0, 0.3), 0.09,
+  add('Balans i nedre ansiktet', 'Näsa, mun och tredjedelar', gauss(mouthToChin / noseToMouth, 2.0, 0.3), 0.09,
       `Mouth→chin ÷ nose→mouth = ${(mouthToChin / noseToMouth).toFixed(2)} (ideal ≈ 2.00)`);
 
   const wsum = m.reduce((s, x) => s + x.weight, 0);
@@ -301,20 +308,21 @@ function drawOverlay(ctx, P, W) {
 function showResult({ total, metrics, warnings, conf }) {
   const t = Math.round(total);
   $('result').style.display = 'block';
+  $('scoreNum').setAttribute('aria-label', `Måttmatchning ${t} av 100`);
   $('scoreNum').textContent = t;
   $('ring').style.setProperty('--p', t);
   const [title, text] =
-    t >= 88 ? ['Exceptional harmony', 'Your proportions and symmetry sit very close to the classical ideals.'] :
-    t >= 78 ? ['High harmony', 'Strong symmetry and well-balanced proportions overall.'] :
-    t >= 66 ? ['Good harmony', 'Most measurements fall near the ideal ratios.'] :
-    t >= 55 ? ['Average harmony', 'A typical mix of ratios — real faces rarely match the ideals exactly.'] :
-              ['Unconventional proportions', 'Your ratios differ from the classical ideals, which says nothing about how attractive you are. Photo angle and expression affect this a lot.'];
+    t >= 88 ? ['Exceptional harmony', 'Dina uppmätta proportioner ligger nära de valda klassiska riktvärdena.'] :
+    t >= 78 ? ['High harmony', 'Mätningarna visar relativt jämna proportioner enligt de valda riktvärdena.'] :
+    t >= 66 ? ['Good harmony', 'Flera mått ligger nära de valda riktvärdena.'] :
+    t >= 55 ? ['Average harmony', 'Ett vanligt spann av mått – verkliga ansikten följer sällan idealmått exakt.'] :
+              ['Avviker från riktvärdena', 'Måtten avviker från de valda riktvärdena. Det säger ingenting om hur attraktiv du är. Kameravinkel och ansiktsuttryck påverkar dessutom resultatet.'];
   $('verdictTitle').textContent = title;
   $('verdictText').textContent = text;
-  $('conf').textContent = `Measurement confidence: ${conf}%`;
+  $('conf').textContent = `Teknisk mätkvalitet (grovt uppskattad): ${conf}%`;
 
   $('warnings').innerHTML = warnings.length
-    ? `<div class="warnbox"><b>Photo quality notes</b><ul>${warnings.map(w => `<li>${w}</li>`).join('')}</ul></div>` : '';
+    ? `<div class="warnbox"><b>Anmärkningar om fotot</b><ul>${warnings.map(w => `<li>${w}</li>`).join('')}</ul></div>` : '';
 
   let html = '', group = '';
   metrics.forEach(x => {
