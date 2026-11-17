@@ -1,11 +1,12 @@
 # LOOKSMAX
 
-Enkel webbplats med innehåll som hämtas från Supabase och en inbyggd administratörssida.
+Kunskapswebbplats för hållbara vanor kring hud, hår, träning, sömn, kost, stil och ansiktsproportioner. Innehållsbiblioteket hämtar publicerade artiklar från Supabase och har ett inbyggt administrationsgränssnitt.
 
 ## Delar
 
 - `index.html`: startsida, innehållsbibliotek och administratörsgränssnitt.
-- `facemath.html`: den tidigare FaceMath-funktionen, bevarad som ett separat verktyg.
+- `facemath.html`: FaceMath, ett experimentellt verktyg för förenklade geometriska ansiktsmätningar.
+- Startsidan innehåller även fördjupade kunskapsguider, källor, säkerhetsinformation och en stegvis handlingsplan.
 - Supabase: innehållsdatabas, inloggning och bildlagring.
 
 ## Publicering
@@ -37,3 +38,8 @@ Administratören kan skapa, redigera, publicera och ta bort guider, rutiner, res
 ## FaceMath
 
 FaceMath körs i webbläsaren. Dess resultat är ungefärliga geometriska mätningar, inte vetenskapliga omdömen om skönhet, hälsa eller människovärde. Bilder skickas inte till webbplatsens databas.
+
+
+## Redaktionell information
+
+Kunskapsinnehållet är allmän vägledning och ersätter inte individuell bedömning av legitimerad vårdpersonal. FaceMath är inte diagnostik eller ett vetenskapligt mått på attraktivitet. Den lilla texten "doktor roman kelder" längst ned är uttryckligen märkt som en fiktiv signatur och ska inte uppfattas som en verklig medicinsk yrkestitel.
