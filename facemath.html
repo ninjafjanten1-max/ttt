@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FaceMath – mått och ansiktsproportioner</title>
+<title>FaceMath – NORDMAX</title>
 <style>
   :root { color-scheme:dark; }
-  :root { --bg:#0f1117; --card:#181b24; --text:#e8eaf0; --muted:#8b91a3; --accent:#7c5cff; --good:#2ecc8f; --warn:#f5a623; }
+  :root { --bg:#0c100f; --card:#151c19; --text:#edf1ec; --muted:#9aa89f; --accent:#c5d0c8; --good:#a8b8ae; --warn:#c19b78; }
   * { box-sizing:border-box; }
   body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
   .wrap { max-width:780px; margin:0 auto; padding:24px 16px 60px; }
@@ -14,7 +14,7 @@
   h3 { margin:0 0 10px; font-size:1rem; }
   .sub { color:var(--muted); margin:0 0 20px; }
   .card { background:var(--card); border-radius:16px; padding:20px; margin-bottom:16px; }
-  #drop { border:2px dashed #3a3f52; border-radius:14px; padding:36px 16px; text-align:center; cursor:pointer; color:var(--muted); transition:.2s; }
+  #drop { border:2px dashed #3b4941; border-radius:14px; padding:36px 16px; text-align:center; cursor:pointer; color:var(--muted); transition:.2s; }
   #drop.over, #drop:hover { border-color:var(--accent); color:var(--text); }
   #status { margin-top:12px; color:var(--muted); font-size:.9rem; min-height:1.2em; }
   #stage canvas { width:100%; height:auto; border-radius:12px; display:block; }
@@ -22,7 +22,7 @@
   #result { display:none; }
   .score-row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
   .ring { --p:0; width:130px; height:130px; border-radius:50%; display:grid; place-items:center;
-    background:conic-gradient(var(--accent) calc(var(--p)*1%), #2a2e3d 0); }
+    background:conic-gradient(var(--accent) calc(var(--p)*1%), #29362f 0); }
   .ring span { background:var(--card); width:100px; height:100px; border-radius:50%; display:grid; place-items:center; font-size:2rem; font-weight:700; }
   .verdict { flex:1; min-width:180px; }
   .verdict h2 { margin:0 0 4px; }
@@ -30,9 +30,9 @@
   .metric { margin:12px 0; }
   .metric .top { display:flex; justify-content:space-between; font-size:.92rem; }
   .metric .detail { color:var(--muted); font-size:.8rem; margin-top:3px; }
-  .bar { height:8px; background:#2a2e3d; border-radius:6px; overflow:hidden; margin-top:6px; }
+  .bar { height:8px; background:#29362f; border-radius:6px; overflow:hidden; margin-top:6px; }
   .bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); width:0; transition:width .8s; }
-  .warnbox { background:#2b2414; border:1px solid #5a4516; color:#f3d9a0; border-radius:10px; padding:10px 14px; font-size:.85rem; margin-top:14px; line-height:1.5; }
+  .warnbox { background:#29251d; border:1px solid #65533a; color:#e5d3b7; border-radius:10px; padding:10px 14px; font-size:.85rem; margin-top:14px; line-height:1.5; }
   .warnbox ul { margin:6px 0 0 18px; padding:0; }
   .conf { font-size:.85rem; color:var(--muted); margin-top:10px; }
   .note { font-size:.8rem; color:var(--muted); line-height:1.55; }
@@ -44,7 +44,7 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="index.html">← Tillbaka till LOOKSMAX</a>
+  <a class="back" href="index.html">← Tillbaka till NORDMAX</a>
   <h1>FaceMath</h1>
   <p class="sub">Ladda upp ett foto för att se geometriska mått och jämförelser med några klassiska proportioner. Analysen körs direkt i din webbläsare.</p>
 
