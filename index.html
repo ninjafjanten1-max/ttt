@@ -1,335 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="sv">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FaceMath – Facial Harmony Rater</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10120f">
+<meta name="description" content="LOOKSMAX – tydliga guider och hållbara rutiner för hud, hår, stil och vardag.">
+<title>LOOKSMAX — bygg din grund</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0f1117; --card:#181b24; --text:#e8eaf0; --muted:#8b91a3; --accent:#7c5cff; --good:#2ecc8f; --warn:#f5a623; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
-  .wrap { max-width:780px; margin:0 auto; padding:24px 16px 60px; }
-  h1 { margin:0 0 4px; font-size:1.8rem; }
-  h3 { margin:0 0 10px; font-size:1rem; }
-  .sub { color:var(--muted); margin:0 0 20px; }
-  .card { background:var(--card); border-radius:16px; padding:20px; margin-bottom:16px; }
-  #drop { border:2px dashed #3a3f52; border-radius:14px; padding:36px 16px; text-align:center; cursor:pointer; color:var(--muted); transition:.2s; }
-  #drop.over, #drop:hover { border-color:var(--accent); color:var(--text); }
-  #status { margin-top:12px; color:var(--muted); font-size:.9rem; min-height:1.2em; }
-  #stage canvas { width:100%; height:auto; border-radius:12px; display:block; }
-  .toggle { margin-top:10px; font-size:.85rem; color:var(--muted); display:flex; align-items:center; gap:8px; }
-  #result { display:none; }
-  .score-row { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
-  .ring { --p:0; width:130px; height:130px; border-radius:50%; display:grid; place-items:center;
-    background:conic-gradient(var(--accent) calc(var(--p)*1%), #2a2e3d 0); }
-  .ring span { background:var(--card); width:100px; height:100px; border-radius:50%; display:grid; place-items:center; font-size:2rem; font-weight:700; }
-  .verdict { flex:1; min-width:180px; }
-  .verdict h2 { margin:0 0 4px; }
-  .group { margin-top:18px; font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
-  .metric { margin:12px 0; }
-  .metric .top { display:flex; justify-content:space-between; font-size:.92rem; }
-  .metric .detail { color:var(--muted); font-size:.8rem; margin-top:3px; }
-  .bar { height:8px; background:#2a2e3d; border-radius:6px; overflow:hidden; margin-top:6px; }
-  .bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); width:0; transition:width .8s; }
-  .warnbox { background:#2b2414; border:1px solid #5a4516; color:#f3d9a0; border-radius:10px; padding:10px 14px; font-size:.85rem; margin-top:14px; line-height:1.5; }
-  .warnbox ul { margin:6px 0 0 18px; padding:0; }
-  .conf { font-size:.85rem; color:var(--muted); margin-top:10px; }
-  .note { font-size:.8rem; color:var(--muted); line-height:1.55; }
-  .note ul { margin:6px 0 0 18px; padding:0; }
+:root{--bg:#10120f;--panel:#191d18;--panel2:#20251f;--line:#30382e;--text:#eff1e9;--muted:#a0a99a;--lime:#c8f169;--lime2:#a9d84f;--orange:#ff986d;--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif}a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}.shell{max-width:1180px;margin:auto;padding:0 28px}.topbar{height:78px;border-bottom:1px solid #ffffff12;display:flex;align-items:center;position:sticky;top:0;background:#10120feF;backdrop-filter:blur(16px);z-index:10}.nav{display:flex;align-items:center;justify-content:space-between;width:100%}.brand{font-size:20px;font-weight:800;letter-spacing:-1px}.brand span{color:var(--lime)}.links{display:flex;gap:28px;align-items:center;color:var(--muted);font-size:13px;font-weight:700}.links a:hover{color:var(--lime)}.btn{border:0;border-radius:999px;background:var(--lime);color:#12160d;padding:12px 18px;font-weight:800;font-size:12px;letter-spacing:.02em}.btn:hover{background:#dcff91;transform:translateY(-1px)}.btn.secondary{background:#ffffff0b;color:var(--text);border:1px solid var(--line)}.btn.danger{background:#472a24;color:#ffd8ca}.btn.small{padding:9px 13px}.hero{padding:82px 0 62px;display:grid;grid-template-columns:1.25fr .75fr;gap:50px;align-items:center}.eyebrow,.mono{font:11px 'DM Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--lime)}h1{font-size:clamp(48px,7vw,88px);line-height:.98;letter-spacing:-.075em;margin:18px 0 22px;max-width:750px}h1 em{font-style:normal;color:var(--lime)}.lead{font-size:16px;line-height:1.8;color:var(--muted);max-width:560px}.hero-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}.hero-art{min-height:330px;border-radius:28px;background:radial-gradient(circle at 65% 25%,#d0f47733,transparent 34%),linear-gradient(145deg,#252d22,#151a14);border:1px solid #ffffff12;position:relative;overflow:hidden;padding:28px;display:flex;flex-direction:column;justify-content:space-between}.orb{width:170px;height:170px;border-radius:50%;border:1px solid #d1f47c88;position:absolute;right:28px;top:45px;box-shadow:0 0 0 22px #d1f47c0a,0 0 0 46px #d1f47c08}.orb:after{content:"";position:absolute;inset:27px;border-radius:50%;border:1px dashed #d1f47c88}.art-index{font:10px 'DM Mono';color:#9aa58d}.art-bottom{position:relative;z-index:1}.art-bottom strong{font-size:26px;letter-spacing:-1px;display:block}.art-bottom span{font-size:12px;color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:23px 0;margin-bottom:72px}.stat{padding:0 22px;border-right:1px solid var(--line)}.stat:first-child{padding-left:0}.stat:last-child{border:0}.stat b{font-size:22px;letter-spacing:-1px}.stat span{display:block;color:var(--muted);font-size:11px;margin-top:5px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}.section-head h2{font-size:34px;letter-spacing:-.06em;margin:8px 0 0}.section-head p{color:var(--muted);font-size:13px;max-width:360px;line-height:1.6}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.chip{border:1px solid var(--line);color:var(--muted);background:transparent;border-radius:99px;padding:9px 14px;font-size:11px;font-weight:800}.chip.active,.chip:hover{background:var(--lime);border-color:var(--lime);color:#15190f}.search{background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:12px 16px;color:var(--text);min-width:220px;outline:none}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.item{background:var(--panel);border:1px solid #ffffff0d;border-radius:var(--radius);overflow:hidden;transition:.2s;display:flex;flex-direction:column;min-height:315px}.item:hover{transform:translateY(-4px);border-color:#c8f16955}.thumb{height:155px;background:linear-gradient(135deg,#2b3525,#1b2119);display:grid;place-items:center;overflow:hidden;color:var(--lime);font-size:40px}.thumb img{width:100%;height:100%;object-fit:cover}.item-content{padding:20px;display:flex;flex-direction:column;flex:1}.meta{display:flex;gap:8px;align-items:center;font:10px 'DM Mono';color:var(--lime);text-transform:uppercase;letter-spacing:.08em}.item h3{font-size:19px;letter-spacing:-.04em;margin:12px 0 8px}.item p{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 20px}.read{margin-top:auto;color:var(--lime);font-size:11px;font-weight:800}.empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:var(--radius);padding:45px;text-align:center;color:var(--muted)}.feature{margin:90px 0;background:var(--lime);color:#171b12;border-radius:24px;padding:38px;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}.feature .eyebrow{color:#46572d}.feature h2{font-size:34px;letter-spacing:-.06em;margin:8px 0}.feature p{font-size:13px;line-height:1.7;max-width:620px;color:#47513b}.feature .btn{background:#171b12;color:var(--lime)}.foot{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:20px}.foot strong{color:var(--text)}.modal{position:fixed;inset:0;background:#000b;z-index:30;display:none;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}.dialog{width:min(720px,100%);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;position:relative}.close{position:absolute;right:20px;top:18px;background:#ffffff10;border:1px solid var(--line);color:var(--text);border-radius:50%;width:34px;height:34px}.dialog h2{font-size:32px;letter-spacing:-.06em;margin:14px 0}.dialog .body{white-space:pre-wrap;color:#c2cbbb;font-size:14px;line-height:1.9}.dialog img{width:100%;max-height:260px;object-fit:cover;border-radius:12px;margin:16px 0}.admin{display:none;padding:50px 0 80px}.admin.show{display:block}.admin-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.admin-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}.field{display:grid;gap:7px;margin:13px 0}.field label{font-size:11px;color:var(--muted);font-weight:800}.field input,.field textarea,.field select{width:100%;background:#10140f;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:12px;outline:none}.field textarea{min-height:110px;resize:vertical}.field input:focus,.field textarea:focus{border-color:var(--lime)}.checkrow{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:15px 0}.item-row{padding:13px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}.item-row:last-child{border:0}.item-row b{font-size:12px}.item-row small{display:block;color:var(--muted);margin-top:4px}.row-actions{display:flex;gap:6px}.notice{color:var(--muted);font-size:11px;line-height:1.6}.auth-wrap{max-width:420px;margin:40px auto}.status{font-size:12px;color:var(--lime);min-height:20px;margin:10px 0}.hide{display:none!important}
+@media(max-width:800px){.shell{padding:0 18px}.hero{grid-template-columns:1fr;padding-top:55px}.hero-art{min-height:240px}.grid{grid-template-columns:repeat(2,1fr)}.links{gap:14px}.admin-layout{grid-template-columns:1fr}.feature{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.stats{margin-bottom:55px}}
+@media(max-width:540px){.links a:not(.admin-link){display:none}.hero{gap:26px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr;gap:16px}.stat{border:0;padding:0}.feature{padding:26px}.foot{flex-direction:column}.section-head h2{font-size:29px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>FaceMath</h1>
-  <p class="sub">Upload a photo and get a mathematical facial-harmony score — 3D landmark analysis, run entirely in your browser.</p>
-
-  <div class="card">
-    <div id="drop">📷 Click or drag a front-facing photo here</div>
-    <input type="file" id="file" accept="image/*" hidden>
-    <div id="status">Loading face model…</div>
-  </div>
-
-  <div class="card note">
-    <h3>For accurate results</h3>
-    <ul>
-      <li>Look straight at the camera, chin level, neutral expression, mouth closed, eyes open.</li>
-      <li>Avoid close-up selfies (wide-angle lenses distort eye and nose ratios). Shoot from ~1–2 m, or crop a zoomed photo.</li>
-      <li>No glasses, hair over the eyes or brows, heavy shadows, or filters.</li>
-    </ul>
-  </div>
-
-  <div class="card" id="stage-card" style="display:none">
-    <div id="stage"><canvas id="canvas"></canvas></div>
-    <label class="toggle"><input type="checkbox" id="overlayToggle" checked> Show measurement overlay</label>
-  </div>
-
-  <div class="card" id="result">
-    <div class="score-row">
-      <div class="ring" id="ring"><span id="scoreNum">0</span></div>
-      <div class="verdict">
-        <h2 id="verdictTitle"></h2>
-        <div class="note" id="verdictText"></div>
-        <div class="conf" id="conf"></div>
-      </div>
-    </div>
-    <div id="warnings"></div>
-    <div id="metrics"></div>
-  </div>
-
-  <div class="card note">
-    <b>How it works:</b> A 478-point face-mesh model (MediaPipe) locates your eye corners, irises, nose, mouth and jaw in 3D.
-    The app first <i>frontalizes</i> the face — it removes head roll and left/right turn using the 3D landmarks, so a slightly turned
-    head no longer squashes the eye ratios. It then measures symmetry around the facial midline and compares key proportions
-    (eye spacing, eye width vs. face width, canthal tilt, nose, mouth, facial thirds) to classical ideals such as
-    "one eye-width apart" and the golden ratio.<br><br>
-    <b>Important:</b> this is a fun math toy, not a measure of your worth or real-world attractiveness. Attractiveness depends on
-    expression, skin, style, culture, personality and much more. Your photo never leaves your device.
-  </div>
+<header class="topbar"><div class="shell nav"><a class="brand" href="#">LOOKS<span>MAX</span></a><nav class="links"><a href="#bibliotek">Bibliotek</a><a href="#metod">Vår metod</a><a href="facemath.html">FaceMath</a><a class="admin-link" href="#admin" id="adminNav">Admin ↗</a></nav></div></header>
+<main id="publicApp">
+<div class="shell">
+<section class="hero">
+<div><div class="eyebrow">UTVECKLA DIN GRUND · INTE JAGA PERFEKTION</div><h1>Se bättre ut.<br><em>Må bättre.</em></h1><p class="lead">Praktiska guider för hud, hår, stil och vanor. Mindre överdrifter, mer sådant som faktiskt går att hålla fast vid.</p><div class="hero-actions"><a class="btn" href="#bibliotek">Utforska guiderna ↘</a><a class="btn secondary" href="facemath.html">Testa FaceMath</a></div></div>
+<div class="hero-art"><div class="art-index">01 / BYGG DIN GRUND</div><div class="orb"></div><div class="art-bottom"><strong>Små steg.<br>Riktig utveckling.</strong><span>En rimlig rutin slår en extrem plan.</span></div></div>
+</section>
+<div class="stats"><div class="stat"><b>01</b><span>Enkla vanor först</span></div><div class="stat"><b>02</b><span>Råd utan mirakellöften</span></div><div class="stat"><b>03</b><span>Du styr din egen takt</span></div></div>
+<section id="bibliotek">
+<div class="section-head"><div><div class="eyebrow">KUNSKAPSBIBLIOTEK</div><h2>Hitta din nästa förbättring.</h2></div><p>Välj ett område och börja med en sak. Du behöver inte göra om hela livet på en gång.</p></div>
+<div class="filters" id="filters"><button class="chip active" data-filter="Alla">Alla</button><button class="chip" data-filter="Hud">Hud</button><button class="chip" data-filter="Hår">Hår</button><button class="chip" data-filter="Stil">Stil</button><button class="chip" data-filter="Vardag">Vardag</button><button class="chip" data-filter="Verktyg">Verktyg</button><input class="search" id="search" placeholder="Sök bland innehållet…"></div>
+<div class="grid" id="contentGrid"><div class="empty">Hämtar innehåll…</div></div>
+</section>
+<section class="feature" id="metod"><div><div class="eyebrow">VÅR UTGÅNGSPUNKT</div><h2>Inga genvägar som säljer drömmar.</h2><p>Utseende påverkas av genetik, hälsa, stil, sammanhang och personliga preferenser. Vi fokuserar på sådant du kan påverka på ett sunt och realistiskt sätt. Inga poäng kan sammanfatta en människa.</p></div><a class="btn" href="facemath.html">Se FaceMath ↗</a></section>
+</div></main>
+<section class="admin" id="adminSection"><div class="shell">
+<div class="admin-top"><div><div class="eyebrow">INNEHÅLLSHANTERING</div><h2 style="font-size:34px;letter-spacing:-.06em;margin:7px 0">Administratör</h2><div class="notice">Inloggad som <span id="adminEmail"></span></div></div><button class="btn secondary" id="logoutBtn">Logga ut</button></div>
+<div id="authPanel" class="panel auth-wrap"><h3>Logga in</h3><p class="notice">Använd administratörens e-postadress och lösenord. Kontot måste vara verifierat.</p><form id="loginForm"><div class="field"><label>E-POST</label><input type="email" id="loginEmail" required autocomplete="username" value="ninjafjanten1@gmail.com"></div><div class="field"><label>LÖSENORD</label><input type="password" id="loginPassword" required autocomplete="current-password"></div><button class="btn" type="submit" style="width:100%">Logga in</button></form><div class="status" id="authStatus"></div><p class="notice">Första gången? <button class="chip" id="signupBtn">Skapa administratörskonto</button> Skapa bara kontot för den e-postadress som har behörighet.</p></div>
+<div id="editorPanel" class="hide">
+<div class="admin-layout"><div class="panel"><div class="eyebrow">INLÄGG</div><h3 id="formHeading">Lägg till innehåll</h3><form id="contentForm">
+<input type="hidden" id="itemId">
+<div class="field"><label>RUBRIK</label><input id="title" maxlength="120" required></div>
+<div class="field"><label>KORTNAMN I WEBBADRESSEN</label><input id="slug" maxlength="140" required></div>
+<div class="field"><label>INNEHÅLLSTYP</label><select id="type"><option value="guide">Guide</option><option value="routine">Rutin</option><option value="resource">Verktyg / resurs</option><option value="product">Produkt</option></select></div>
+<div class="field"><label>OMRÅDE</label><select id="category"><option>Hud</option><option>Hår</option><option>Stil</option><option>Vardag</option><option>Verktyg</option><option>Allmänt</option></select></div>
+<div class="field"><label>KORT BESKRIVNING</label><textarea id="excerpt" maxlength="260" required></textarea></div>
+<div class="field"><label>HELA TEXTEN</label><textarea id="bodyText" required style="min-height:180px"></textarea></div>
+<div class="field"><label>BILD (JPG, PNG, WEBP, AVIF – HÖGST 5 MB)</label><input type="file" id="imageFile" accept="image/jpeg,image/png,image/webp,image/avif"></div>
+<div class="field"><label>ELLER BILDLÄNK</label><input type="url" id="imageUrl" placeholder="https://…"></div>
+<div class="field"><label>ALTERNATIV BILDTEXT</label><input id="imageAlt" maxlength="180"></div>
+<div class="field"><label>EXTERN LÄNK (VALFRITT)</label><input type="url" id="externalUrl" placeholder="https://…"></div>
+<div class="checkrow"><label><input type="checkbox" id="featured"> Lyft fram</label><label><input type="checkbox" id="published" checked> Publicerad</label></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="submit" id="saveBtn">Spara innehåll</button><button class="btn secondary" type="button" id="resetBtn">Rensa</button></div><div class="status" id="saveStatus"></div>
+</form></div>
+<div class="panel"><div class="eyebrow">DITT BIBLIOTEK</div><h3>Publicerat och utkast</h3><div id="adminItems"></div></div></div>
 </div>
-
-<script type="module">
-import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm";
-
-const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
-const MODEL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+</div></section>
+<footer class="shell foot"><strong>LOOKSMAX</strong><span>Utveckling utan överdrifter. Innehåll för allmän vägledning – inte medicinsk rådgivning.</span><span>© <span id="year"></span></span></footer>
+<div class="modal" id="detailModal"><article class="dialog"><button class="close" id="closeModal">×</button><div id="detailContent"></div></article></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script>
+(() => {
+const SUPABASE_URL = "https://neknldlfuqoxriivnspa.supabase.co";
+const SUPABASE_KEY = "sb_publishable_wi8lfElIiTrCdlE0bXsPmw_W_rWEz8-";
+const ADMIN_EMAIL = "ninjafjanten1@gmail.com";
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
-let landmarker = null, lastDraw = null;
-
-(async () => {
-  try {
-    const fileset = await FilesetResolver.forVisionTasks(WASM);
-    landmarker = await FaceLandmarker.createFromOptions(fileset, {
-      baseOptions: { modelAssetPath: MODEL, delegate: "CPU" },
-      runningMode: "IMAGE",
-      numFaces: 2
-    });
-    $('status').textContent = 'Model ready. Upload a clear, front-facing photo.';
-  } catch (e) {
-    console.error(e);
-    $('status').textContent = 'Could not load the face model. Check your internet connection and serve the page over http(s), not file://.';
-  }
+const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = value => {try {const u = new URL(value); return ['https:','http:'].includes(u.protocol) ? u.href : '';} catch {return '';}};
+let items = [], activeFilter = 'Alla', currentUser = null;
+const typeLabel = t => ({guide:'Guide',routine:'Rutin',resource:'Verktyg',product:'Produkt'}[t] || 'Innehåll');
+const categoryFor = x => x.category === 'Allmänt' ? 'Alla' : x.category;
+function visibleItems(){const q=$('search').value.trim().toLowerCase();return items.filter(x=>x.published && (activeFilter==='Alla'||categoryFor(x)===activeFilter) && (!q || [x.title,x.excerpt,x.body,x.category].join(' ').toLowerCase().includes(q))).sort((a,b)=>(b.featured-a.featured)||(a.sort_order-b.sort_order));}
+function renderPublic(){const list=visibleItems();$('contentGrid').innerHTML=list.length?list.map(x=>{const img=safeUrl(x.image_url);return `<article class="item"><div class="thumb">${img?`<img src="${esc(img)}" alt="${esc(x.image_alt)}" loading="lazy">`:'✳'}</div><div class="item-content"><div class="meta">${esc(typeLabel(x.type))} · ${esc(x.category)}</div><h3>${esc(x.title)}</h3><p>${esc(x.excerpt)}</p><a class="read" href="#" data-open="${esc(x.id)}">LÄS MER ↗</a></div></article>`}).join(''):'<div class="empty">Inget innehåll hittades. Prova ett annat sökord eller område.</div>';}
+async function loadItems(){const {data,error}=await client.from('content_items').select('*').order('sort_order').order('created_at',{ascending:false});if(error){$('contentGrid').innerHTML='<div class="empty">Kunde inte hämta innehållet just nu. Försök ladda om sidan.</div>';console.error(error);return;}items=data||[];renderPublic();if(currentUser)renderAdminList();}
+$('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;activeFilter=b.dataset.filter;document.querySelectorAll('.chip[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderPublic();});
+$('search').addEventListener('input',renderPublic);
+$('contentGrid').addEventListener('click',e=>{const a=e.target.closest('[data-open]');if(!a)return;e.preventDefault();const x=items.find(i=>i.id===a.dataset.open);if(!x)return;const img=safeUrl(x.image_url),link=safeUrl(x.external_url);$('detailContent').innerHTML=`<div class="meta">${esc(typeLabel(x.type))} · ${esc(x.category)}</div><h2>${esc(x.title)}</h2><p class="notice">${esc(x.excerpt)}</p>${img?`<img src="${esc(img)}" alt="${esc(x.image_alt)}">`:''}<div class="body">${esc(x.body)}</div>${link?`<p style="margin-top:24px"><a class="btn" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Läs vidare ↗</a></p>`:''}`;$('detailModal').classList.add('open');});
+$('closeModal').onclick=()=>$('detailModal').classList.remove('open');$('detailModal').addEventListener('click',e=>{if(e.target===$('detailModal'))$('detailModal').classList.remove('open');});
+$('adminNav').addEventListener('click',()=>{showAdmin();});
+function showAdmin(){ $('publicApp').classList.add('hide');$('adminSection').classList.add('show');window.scrollTo(0,0); }
+function showPublic(){ $('adminSection').classList.remove('show');$('publicApp').classList.remove('hide');window.scrollTo(0,0); }
+function setAuthStatus(t){$('authStatus').textContent=t;}
+function setSaveStatus(t){$('saveStatus').textContent=t;}
+function isAllowed(user){return !!user && user.email?.toLowerCase()===ADMIN_EMAIL;}
+async function refreshAuth(){const {data}=await client.auth.getSession();const user=data.session?.user||null;currentUser=isAllowed(user)?user:null;if(currentUser){$('authPanel').classList.add('hide');$('editorPanel').classList.remove('hide');$('adminEmail').textContent=currentUser.email;$('logoutBtn').classList.remove('hide');await loadItems();}else{$('authPanel').classList.remove('hide');$('editorPanel').classList.add('hide');$('adminEmail').textContent='';$('logoutBtn').classList.add('hide');}}
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();setAuthStatus('Loggar in…');const {error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error){setAuthStatus('Inloggningen misslyckades: '+error.message);return;}await refreshAuth();});
+$('signupBtn').onclick=async()=>{const email=$('loginEmail').value.trim();const password=$('loginPassword').value;if(email.toLowerCase()!==ADMIN_EMAIL){setAuthStatus('Använd den förvalda administratörsadressen.');return;}if(password.length<8){setAuthStatus('Välj ett lösenord på minst 8 tecken.');return;}setAuthStatus('Skapar konto…');const {error}=await client.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname+'#admin'}});setAuthStatus(error?'Kunde inte skapa konto: '+error.message:'Kontot är skapat. Kontrollera inkorgen och bekräfta e-postadressen innan du loggar in.');};
+$('logoutBtn').onclick=async()=>{await client.auth.signOut();currentUser=null;await refreshAuth();showPublic();};
+client.auth.onAuthStateChange((_event,session)=>{const user=session?.user||null;currentUser=isAllowed(user)?user:null;if(currentUser){$('authPanel').classList.add('hide');$('editorPanel').classList.remove('hide');$('adminEmail').textContent=currentUser.email;loadItems();}else if(!$('adminSection').classList.contains('show')){}else{$('authPanel').classList.remove('hide');$('editorPanel').classList.add('hide');}});
+function resetForm(){$('contentForm').reset();$('itemId').value='';$('formHeading').textContent='Lägg till innehåll';$('saveBtn').textContent='Spara innehåll';$('published').checked=true;}
+$('resetBtn').onclick=resetForm;
+$('title').addEventListener('input',()=>{if(!$('itemId').value)$('slug').value=$('title').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');});
+function renderAdminList(){$('adminItems').innerHTML=items.slice().sort((a,b)=>a.title.localeCompare(b.title,'sv')).map(x=>`<div class="item-row"><div><b>${esc(x.title)}</b><small>${esc(x.category)} · ${x.published?'Publicerad':'Utkast'}</small></div><div class="row-actions"><button class="chip" data-edit="${esc(x.id)}">Ändra</button><button class="chip" data-delete="${esc(x.id)}">Ta bort</button></div></div>`).join('')||'<p class="notice">Inga inlägg ännu.</p>';}
+$('adminItems').addEventListener('click',async e=>{const edit=e.target.closest('[data-edit]'),del=e.target.closest('[data-delete]');if(edit){const x=items.find(i=>i.id===edit.dataset.edit);if(!x)return;$('itemId').value=x.id;$('title').value=x.title;$('slug').value=x.slug;$('type').value=x.type;$('category').value=x.category;$('excerpt').value=x.excerpt;$('bodyText').value=x.body;$('imageUrl').value=x.image_url||'';$('imageAlt').value=x.image_alt||'';$('externalUrl').value=x.external_url||'';$('featured').checked=x.featured;$('published').checked=x.published;$('formHeading').textContent='Ändra innehåll';$('saveBtn').textContent='Spara ändringar';$('contentForm').scrollIntoView({behavior:'smooth'});}if(del){const x=items.find(i=>i.id===del.dataset.delete);if(!x||!confirm('Ta bort "'+x.title+'"? Detta går inte att ångra.'))return;const {error}=await client.from('content_items').delete().eq('id',x.id);if(error){alert('Kunde inte ta bort: '+error.message);return;}await loadItems();}});
+$('contentForm').addEventListener('submit',async e=>{e.preventDefault();if(!currentUser||!isAllowed(currentUser)){setSaveStatus('Du saknar behörighet.');return;}setSaveStatus('Sparar…');$('saveBtn').disabled=true;let imageUrl=safeUrl($('imageUrl').value.trim())||null;const file=$('imageFile').files[0];if(file){if(file.size>5*1024*1024){setSaveStatus('Bilden är större än 5 MB.');$('saveBtn').disabled=false;return;}const ext=file.name.split('.').pop().toLowerCase();const path=crypto.randomUUID()+'.'+ext;const {error:upErr}=await client.storage.from('lookmax-media').upload(path,file,{upsert:false,contentType:file.type});if(upErr){setSaveStatus('Bildöverföringen misslyckades: '+upErr.message);$('saveBtn').disabled=false;return;}imageUrl=client.storage.from('lookmax-media').getPublicUrl(path).data.publicUrl;}
+const payload={type:$('type').value,title:$('title').value.trim(),slug:$('slug').value.trim().toLowerCase(),category:$('category').value,excerpt:$('excerpt').value.trim(),body:$('bodyText').value.trim(),image_url:imageUrl,image_alt:$('imageAlt').value.trim(),external_url:safeUrl($('externalUrl').value.trim())||null,featured:$('featured').checked,published:$('published').checked,updated_at:new Date().toISOString()};
+const id=$('itemId').value;const result=id?await client.from('content_items').update(payload).eq('id',id):await client.from('content_items').insert(payload);$('saveBtn').disabled=false;if(result.error){setSaveStatus('Kunde inte spara: '+result.error.message);return;}setSaveStatus('Sparat.');resetForm();await loadItems();});
+$('year').textContent=new Date().getFullYear();
+(async()=>{await loadItems();if(location.hash==='#admin')showAdmin();await refreshAuth();})();
 })();
-
-/* ---------- Upload handling ---------- */
-const drop = $('drop'), fileInput = $('file');
-drop.onclick = () => fileInput.click();
-fileInput.onchange = e => e.target.files[0] && handleFile(e.target.files[0]);
-['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
-['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop', e => e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]));
-$('overlayToggle').onchange = () => lastDraw && lastDraw();
-
-async function handleFile(file) {
-  if (!file.type.startsWith('image/')) { $('status').textContent = 'Please choose an image file.'; return; }
-  if (!landmarker) { $('status').textContent = 'Model still loading, try again in a moment.'; return; }
-  $('status').textContent = 'Analyzing…';
-  $('result').style.display = 'none';
-
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
-  try { await img.decode(); } catch { $('status').textContent = 'Could not read that image.'; return; }
-
-  const canvas = $('canvas');
-  const scale = Math.min(1, 1280 / Math.max(img.naturalWidth, img.naturalHeight));
-  const W = Math.round(img.naturalWidth * scale), H = Math.round(img.naturalHeight * scale);
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0, W, H);
-  $('stage-card').style.display = 'block';
-
-  const res = landmarker.detect(canvas);
-  if (!res.faceLandmarks || !res.faceLandmarks.length) {
-    $('status').textContent = 'No face found. Try a well-lit, front-facing photo.';
-    return;
-  }
-
-  // use the largest face if several are present
-  const width = lm => Math.max(...lm.map(p => p.x)) - Math.min(...lm.map(p => p.x));
-  const faces = res.faceLandmarks.slice().sort((a, b) => width(b) - width(a));
-  const P = faces[0].map(l => ({ x: l.x * W, y: l.y * H, z: l.z * W }));
-
-  const out = analyze(P);
-  if (faces.length > 1) out.warnings.push('Multiple faces detected — the largest one was analyzed.');
-
-  lastDraw = () => {
-    ctx.drawImage(img, 0, 0, W, H);
-    if ($('overlayToggle').checked) drawOverlay(ctx, P, W);
-  };
-  lastDraw();
-  showResult(out);
-  $('status').textContent = 'Done. Upload another photo to compare.';
-}
-
-/* ---------- Math helpers ---------- */
-const d2 = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: ((a.z || 0) + (b.z || 0)) / 2 });
-const deg = r => r * 180 / Math.PI;
-
-// 100 at the ideal; ~61 at one "typical spread" (sd) away; ~14 at two.
-const gauss = (v, ideal, sd) => 100 * Math.exp(-0.5 * Math.pow((v - ideal) / sd, 2));
-
-/* Remove head roll (in-plane) and yaw (left/right turn) using 3D landmarks */
-function frontalize(P) {
-  // roll: level the line between the iris centers
-  const a = P[468], b = P[473];
-  const roll = Math.atan2(b.y - a.y, b.x - a.x);
-  const c = mid(a, b);
-  const cr = Math.cos(-roll), sr = Math.sin(-roll);
-  let Q = P.map(p => {
-    const dx = p.x - c.x, dy = p.y - c.y;
-    return { x: dx * cr - dy * sr, y: dx * sr + dy * cr, z: p.z - c.z };
-  });
-
-  // yaw: angle of the cheek-to-cheek vector in the x–z plane
-  const yaw = Math.atan2(Q[454].z - Q[234].z, Q[454].x - Q[234].x);
-  const applied = Math.max(-0.5, Math.min(0.5, yaw)); // cap correction at ~29°
-  const cy = Math.cos(applied), sy = Math.sin(applied);
-  Q = Q.map(p => ({ x: p.x * cy + p.z * sy, y: p.y, z: -p.x * sy + p.z * cy }));
-  return { Q, rollDeg: deg(roll), yawDeg: deg(yaw) };
-}
-
-const MIRROR_PAIRS = [
-  [33,263],[133,362],[159,386],[145,374],[468,473],
-  [70,300],[63,293],[105,334],[66,296],[107,336],
-  [234,454],[172,397],[58,288],[132,361],[93,323],
-  [129,358],[98,327],[61,291],[50,280],[205,425],
-  [54,284],[103,332],[21,251]
-];
-const MIDLINE = [10, 9, 168, 6, 1, 2, 0, 17, 152];
-
-function analyze(P) {
-  const { Q, rollDeg, yawDeg } = frontalize(P);
-  const warnings = [];
-
-  // ---- measurements (frontalized) ----
-  const faceW = d2(Q[234], Q[454]);
-  const eyeWR = d2(Q[33], Q[133]), eyeWL = d2(Q[362], Q[263]);
-  const eyeW = (eyeWR + eyeWL) / 2;
-  const icd = d2(Q[133], Q[362]);                    // inner-corner distance
-  const ipd = d2(Q[468], Q[473]);                    // interpupillary distance
-  const eyeH = (d2(Q[159], Q[145]) + d2(Q[386], Q[374])) / 2;
-  const openness = eyeH / eyeW;
-  const tiltR = deg(Math.atan2(Q[133].y - Q[33].y, Math.abs(Q[33].x - Q[133].x)));
-  const tiltL = deg(Math.atan2(Q[362].y - Q[263].y, Math.abs(Q[263].x - Q[362].x)));
-  const tilt = (tiltR + tiltL) / 2;                  // + = outer corner higher
-  const noseW = d2(Q[129], Q[358]);
-  const mouthW = d2(Q[61], Q[291]);
-  const stomion = mid(Q[13], Q[14]);
-  const middleThird = Q[2].y - Q[9].y;
-  const lowerThird = Q[152].y - Q[2].y;
-  const noseToMouth = stomion.y - Q[2].y;
-  const mouthToChin = Q[152].y - stomion.y;
-
-  // ---- symmetry ----
-  const midX = MIDLINE.reduce((s, i) => s + Q[i].x, 0) / MIDLINE.length;
-  let sum = 0;
-  MIRROR_PAIRS.forEach(([a, b]) => {
-    sum += Math.hypot(Q[a].x + Q[b].x - 2 * midX, Q[a].y - Q[b].y);
-  });
-  const asym = sum / MIRROR_PAIRS.length / faceW;
-
-  // ---- quality checks ----
-  let conf = 100;
-  const rawFaceW = d2(P[234], P[454]);
-  if (rawFaceW < 150) { warnings.push('The face is small in the image — upload a higher-resolution or closer crop.'); conf -= 20; }
-  if (Math.abs(yawDeg) > 25) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — too much to correct reliably. Use a straight-on photo.`); conf -= 35; }
-  else if (Math.abs(yawDeg) > 10) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — it was corrected mathematically, but a straight-on photo is more accurate.`); conf -= 12; }
-  if (Math.abs(rollDeg) > 15) { warnings.push(`Head is tilted ${Math.abs(rollDeg).toFixed(0)}° — corrected, but a level head is better.`); conf -= 5; }
-  if (openness < 0.2) { warnings.push('Eyes look closed or squinting — eye measurements are unreliable. Retake with eyes relaxed and open.'); conf -= 25; }
-  if (d2(Q[13], Q[14]) / faceW > 0.05) { warnings.push('Mouth looks open or smiling widely — mouth and lower-face ratios may be off. Use a neutral expression.'); conf -= 12; }
-  conf = Math.max(10, conf);
-
-  // ---- metrics: [name, group, score, weight, detail] ----
-  const m = [];
-  const add = (name, group, score, weight, detail) => m.push({ name, group, score, weight, detail });
-
-  add('Facial symmetry', 'Overall', gauss(asym, 0, 0.035), 0.25,
-      `Average left/right mismatch: ${(asym * 100).toFixed(1)}% of face width (ideal 0%)`);
-
-  add('Eye spacing', 'Eyes', gauss(icd / eyeW, 1.0, 0.12), 0.12,
-      `Gap between inner corners ÷ eye width = ${(icd / eyeW).toFixed(2)} (ideal 1.00)`);
-  add('Eye width vs. face', 'Eyes', gauss(faceW / eyeW, 5.0, 0.4), 0.08,
-      `Face width ÷ eye width = ${(faceW / eyeW).toFixed(2)} (classical "fifths" ideal 5.0)`);
-  add('Interpupillary ratio', 'Eyes', gauss(ipd / faceW, 0.46, 0.03), 0.06,
-      `Pupil distance ÷ face width = ${(ipd / faceW).toFixed(2)} (ideal ≈ 0.46)`);
-  add('Canthal tilt', 'Eyes', gauss(tilt, 5, 4), 0.06,
-      `Outer eye corners sit ${tilt >= 0 ? 'higher' : 'lower'} by ${Math.abs(tilt).toFixed(1)}° (ideal ≈ +5°)`);
-  add('Eye openness', 'Eyes', gauss(openness, 0.36, 0.08), 0.04,
-      `Eye height ÷ width = ${openness.toFixed(2)} (ideal ≈ 0.36)`);
-
-  add('Nose width', 'Nose, mouth & thirds', gauss(noseW / icd, 1.0, 0.15), 0.10,
-      `Nose width ÷ eye gap = ${(noseW / icd).toFixed(2)} (ideal 1.00)`);
-  add('Mouth vs. nose', 'Nose, mouth & thirds', gauss(mouthW / noseW, 1.55, 0.2), 0.10,
-      `Mouth width ÷ nose width = ${(mouthW / noseW).toFixed(2)} (ideal ≈ 1.5–1.6)`);
-  add('Facial thirds', 'Nose, mouth & thirds', gauss(lowerThird / middleThird, 1.0, 0.15), 0.10,
-      `Lower ÷ middle face = ${(lowerThird / middleThird).toFixed(2)} (ideal ≈ 1.00)`);
-  add('Lower-face balance', 'Nose, mouth & thirds', gauss(mouthToChin / noseToMouth, 2.0, 0.3), 0.09,
-      `Mouth→chin ÷ nose→mouth = ${(mouthToChin / noseToMouth).toFixed(2)} (ideal ≈ 2.00)`);
-
-  const wsum = m.reduce((s, x) => s + x.weight, 0);
-  const raw = m.reduce((s, x) => s + x.score * x.weight, 0) / wsum;
-  const total = Math.max(0, Math.min(100, 30 + raw * 0.7));
-  return { total, metrics: m, warnings, conf };
-}
-
-/* ---------- Overlay ---------- */
-function drawOverlay(ctx, P, W) {
-  const lw = Math.max(1.5, W / 450);
-  const line = (a, b, color, dash) => {
-    ctx.beginPath(); ctx.setLineDash(dash || []);
-    ctx.moveTo(P[a].x, P[a].y); ctx.lineTo(P[b].x, P[b].y);
-    ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke(); ctx.setLineDash([]);
-  };
-  const loop = (idx, color) => {
-    ctx.beginPath();
-    idx.forEach((i, k) => k ? ctx.lineTo(P[i].x, P[i].y) : ctx.moveTo(P[i].x, P[i].y));
-    ctx.closePath(); ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke();
-  };
-  const dot = (i, color, r) => { ctx.beginPath(); ctx.arc(P[i].x, P[i].y, r || lw * 1.6, 0, 7); ctx.fillStyle = color; ctx.fill(); };
-
-  loop([33,246,161,160,159,158,157,173,133,155,154,153,145,144,163,7], '#7c5cff');
-  loop([362,398,384,385,386,387,388,466,263,249,390,373,374,380,381,382], '#7c5cff');
-  line(33, 133, '#2ecc8f'); line(362, 263, '#2ecc8f');   // eye widths
-  line(133, 362, '#f5d142');                              // inner gap
-  line(234, 454, '#ffffff88', [6, 6]);                    // face width
-  line(129, 358, '#ff7ab8'); line(61, 291, '#ff7ab8');    // nose & mouth width
-  line(10, 152, '#ffffff55', [4, 6]);                     // midline
-  [468, 473, 33, 133, 362, 263, 2, 152].forEach(i => dot(i, '#ffffff'));
-}
-
-/* ---------- Results ---------- */
-function showResult({ total, metrics, warnings, conf }) {
-  const t = Math.round(total);
-  $('result').style.display = 'block';
-  $('scoreNum').textContent = t;
-  $('ring').style.setProperty('--p', t);
-  const [title, text] =
-    t >= 88 ? ['Exceptional harmony', 'Your proportions and symmetry sit very close to the classical ideals.'] :
-    t >= 78 ? ['High harmony', 'Strong symmetry and well-balanced proportions overall.'] :
-    t >= 66 ? ['Good harmony', 'Most measurements fall near the ideal ratios.'] :
-    t >= 55 ? ['Average harmony', 'A typical mix of ratios — real faces rarely match the ideals exactly.'] :
-              ['Unconventional proportions', 'Your ratios differ from the classical ideals, which says nothing about how attractive you are. Photo angle and expression affect this a lot.'];
-  $('verdictTitle').textContent = title;
-  $('verdictText').textContent = text;
-  $('conf').textContent = `Measurement confidence: ${conf}%`;
-
-  $('warnings').innerHTML = warnings.length
-    ? `<div class="warnbox"><b>Photo quality notes</b><ul>${warnings.map(w => `<li>${w}</li>`).join('')}</ul></div>` : '';
-
-  let html = '', group = '';
-  metrics.forEach(x => {
-    if (x.group !== group) { group = x.group; html += `<div class="group">${group}</div>`; }
-    html += `
-      <div class="metric">
-        <div class="top"><span>${x.name}</span><b>${Math.round(x.score)}/100</b></div>
-        <div class="bar"><i data-w="${x.score}"></i></div>
-        <div class="detail">${x.detail}</div>
-      </div>`;
-  });
-  $('metrics').innerHTML = html;
-  requestAnimationFrame(() => document.querySelectorAll('.bar i').forEach(b => b.style.width = b.dataset.w + '%'));
-  $('result').scrollIntoView({ behavior: 'smooth' });
-}
 </script>
-</body>
-</html>
+</body></html>
