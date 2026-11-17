@@ -44,10 +44,34 @@ body{line-height:1.5}
 .status{line-height:1.6}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 @media(max-width:540px){.hero{padding-top:48px}.hero-art{min-height:220px}.search{width:100%;min-width:0}.filters{align-items:stretch}.filters .chip{flex:1}.item{min-height:0}.thumb{height:190px}.dialog{padding:22px 18px}.admin-top{align-items:flex-start;gap:12px;flex-wrap:wrap}}
+
+/* Fördjupat kunskapsbibliotek */
+.deep-section{margin:92px 0}
+.deep-intro{max-width:760px;color:var(--muted);line-height:1.85;font-size:14px}
+.topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:26px}
+.topic-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+.topic-card .topic-no{font:11px 'DM Mono',monospace;color:var(--lime);letter-spacing:.12em}
+.topic-card h3{font-size:22px;letter-spacing:-.05em;margin:10px 0}
+.topic-card p,.topic-card li{font-size:13px;color:var(--muted);line-height:1.8}
+.topic-card ul{padding-left:19px;margin:12px 0}
+.topic-card details{border-top:1px solid var(--line);margin-top:16px;padding-top:13px}
+.topic-card summary{cursor:pointer;font-size:12px;font-weight:800;color:var(--lime)}
+.topic-card details p{margin-bottom:0}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.plan{padding:22px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(145deg,#20271d,#171b16)}
+.plan b{font:11px 'DM Mono',monospace;color:var(--lime)}
+.plan h3{margin:9px 0;font-size:18px}
+.plan p{color:var(--muted);font-size:12px;line-height:1.8;margin:0}
+.source-list{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.source-list a{border:1px solid var(--line);border-radius:999px;padding:9px 13px;color:var(--lime);font-size:11px;font-weight:700}
+.disclaimer{border-left:3px solid var(--lime);padding:15px 18px;background:#c8f1690b;color:var(--muted);font-size:12px;line-height:1.8;margin-top:22px}
+.signature{display:block;text-align:right;font:9px 'DM Mono',monospace;letter-spacing:.09em;text-transform:lowercase;color:#66705f;margin-top:14px}
+@media(max-width:800px){.topic-grid{grid-template-columns:1fr}.plan-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
-<header class="topbar"><div class="shell nav"><a class="brand" href="#">LOOKS<span>MAX</span></a><nav class="links"><a href="#bibliotek">Bibliotek</a><a href="#metod">Vår metod</a><a href="facemath.html">FaceMath</a><a class="admin-link" href="#admin" id="adminNav">Admin ↗</a></nav></div></header>
+<header class="topbar"><div class="shell nav"><a class="brand" href="#">LOOKS<span>MAX</span></a><nav class="links"><a href="#bibliotek">Bibliotek</a><a href="#kunskap">Kunskap</a><a href="#plan">Plan</a><a href="facemath.html">FaceMath</a><a class="admin-link" href="#admin" id="adminNav">Admin ↗</a></nav></div></header>
 <a class="skip-link" href="#bibliotek">Hoppa till innehållet</a>
 <main id="publicApp">
 <div class="shell">
@@ -69,6 +93,30 @@ body{line-height:1.5}
 <article class="item" style="min-height:0"><div class="item-content"><div class="meta">STEG 03 · UTVÄRDERA</div><h3>Behåll det som fungerar</h3><p>Följ upp hur vanan fungerar för dig – inte hur du står dig mot någon annans utseende.</p></div></article>
 </div>
 </section>
+
+<section class="deep-section" id="kunskap">
+  <div class="section-head"><div><div class="eyebrow">KUNSKAP PÅ DJUPET</div><h2>Förstå grunderna – inte bara trenderna.</h2></div><p>En samlad introduktion till områdena som påverkar välmående, vårdade vanor och personligt uttryck.</p></div>
+  <p class="deep-intro">Det finns inga universella ideal eller en enda rutin som passar alla. Målet här är att ge dig ett bättre beslutsunderlag: vad som brukar vara rimligt att börja med, vad som ofta överdrivs och när det är klokt att söka professionell hjälp.</p>
+  <div class="topic-grid">
+    <article class="topic-card"><div class="topic-no">01 / HUD OCH HUDVÅRD</div><h3>Bygg en fungerande hudrutin</h3><p>Hudvård handlar främst om att rengöra skonsamt, återfukta vid behov och skydda huden mot sol. Fler produkter betyder inte automatiskt bättre resultat.</p><ul><li>Rengör varsamt och undvik att skrubba hårt.</li><li>Välj återfuktning efter hur huden känns och reagerar.</li><li>Använd bredspektrumskydd mot solen och återapplicera vid längre utevistelse.</li><li>Introducera en ny aktiv ingrediens i taget så att irritation går att upptäcka.</li></ul><details><summary>Läs mer om vanliga misstag</summary><p>Överexfoliering, att kombinera många starka produkter och att byta rutin varje vecka kan förvärra irritation. Akne, eksem, rosacea och ihållande utslag kan behöva bedömning av vårdpersonal. Kläm inte inflammerade utslag och använd inte starka behandlingar på chans.</p></details></article>
+    <article class="topic-card"><div class="topic-no">02 / HÅR OCH HÅRBOTTEN</div><h3>Vårda håret utifrån dess behov</h3><p>Hårtyp, hårbotten, längd, kemiska behandlingar och vardagsvanor påverkar vilken rutin som fungerar.</p><ul><li>Tvätta efter hur snabbt hårbotten blir fet eller irriterad – inte efter en universell regel.</li><li>Applicera balsam främst i längderna om hårbotten lätt blir tung.</li><li>Minska hög värme och använd värmeskydd när du stylar varmt.</li><li>Undvik hårda frisyrer som drar konstant i hårfästet.</li></ul><details><summary>Om håravfall</summary><p>Plötsligt, fläckvist eller snabbt tilltagande håravfall bör bedömas av vården. Kosttillskott hjälper inte automatiskt och kan vara olämpliga i höga doser. Orsaken behöver förstås innan behandling väljs.</p></details></article>
+    <article class="topic-card"><div class="topic-no">03 / TRÄNING OCH HÅLLNING</div><h3>Styrka byggs över tid</h3><p>Regelbunden styrketräning kan förbättra styrka, funktion och kroppskontroll. En hållbar plan slår sporadiska extrempass.</p><ul><li>Träna kroppens större muskelgrupper regelbundet.</li><li>Börja med teknik och belastning du kan kontrollera.</li><li>Öka gradvis när övningarna känns stabila.</li><li>Planera in återhämtning och anpassa efter dagsform.</li></ul><details><summary>Hållning utan mirakellöften</summary><p>Variera arbetsställning, rör på dig under dagen och stärk kroppen på ett allsidigt sätt. Det finns ingen enda perfekt hållning som måste hållas hela dagen. Smärta, domningar eller besvär som inte går över bör bedömas professionellt.</p></details></article>
+    <article class="topic-card"><div class="topic-no">04 / KOST OCH SÖMN</div><h3>Stöd kroppen med grunderna</h3><p>Mat och sömn påverkar ork, återhämtning och välbefinnande. Undvik snabba dieter och löften om att en viss mat förändrar ansiktsformen.</p><ul><li>Ät varierat och regelbundet på ett sätt som fungerar i vardagen.</li><li>Prioritera fiberrika livsmedel, frukt, grönsaker och tillräckligt med protein.</li><li>Drick efter törst och aktivitetsnivå.</li><li>Håll någorlunda regelbundna sovtider och skapa en lugn kvällsrutin.</li></ul><details><summary>Var försiktig med kosttillskott</summary><p>Kosttillskott är inte en genväg och kan interagera med läkemedel. Undvik megadoser och produkter som lovar hormonförändringar, snabb fettförlust eller dramatisk utseendeförändring. Sök individuell rådgivning vid sjukdom, graviditet eller läkemedelsbehandling.</p></details></article>
+    <article class="topic-card"><div class="topic-no">05 / STIL OCH HELHETSINTRYCK</div><h3>Passform före märken</h3><p>Kläder som sitter bra, är hela och passar sammanhanget ger ofta större effekt än dyra logotyper.</p><ul><li>Kontrollera axelsöm, ärmlängd, midja och byxlängd.</li><li>Bygg en enkel bas med färger som fungerar tillsammans.</li><li>Välj skor och ytterplagg som passar både väder och vardag.</li><li>Håll naglar, skägg och hår rena och välskötta på ditt sätt.</li></ul><details><summary>Hitta en egen stil</summary><p>Spara exempel på plagg och kombinationer du faktiskt trivs i. Testa en förändring åt gången. Stil är ett uttryck, inte en regelbok och inte ett mått på människovärde.</p></details></article>
+    <article class="topic-card"><div class="topic-no">06 / ANSIKTE OCH PROPORTIONER</div><h3>Mätningar är inte facit</h3><p>Ansikten varierar naturligt. Symmetri och proportioner kan beskrivas geometriskt, men de ger inget objektivt betyg på attraktivitet eller hälsa.</p><ul><li>Kameravinkel, avstånd, ljus och ansiktsuttryck påverkar mätningar.</li><li>Ansiktsdrag förändras med ålder och naturlig variation.</li><li>Filter och jämförelser med redigerade bilder ger missvisande referenser.</li><li>FaceMath är ett experimentellt hjälpmedel, inte diagnostik.</li></ul><details><summary>Så ska FaceMath användas</summary><p>Använd verktyget av nyfikenhet, inte för att fatta beslut om ingrepp eller bedöma ditt värde. Det kan inte fastställa medicinska tillstånd, förutsäga hur andra uppfattar dig eller ge en vetenskaplig skönhetspoäng.</p></details></article>
+  </div>
+  <div class="disclaimer"><strong>Viktigt:</strong> Innehållet är allmän information och ersätter inte individuell medicinsk, fysioterapeutisk eller dietistledd rådgivning. Vid nya, svåra eller ihållande symtom ska du kontakta legitimerad vårdpersonal. Vi rekommenderar inte steroider, extrema dieter, självmedicinering eller kosmetiska ingrepp som snabb lösning.</div>
+  <div class="source-list"><a href="https://www.1177.se/" target="_blank" rel="noopener noreferrer">1177 – vårdinformation ↗</a><a href="https://www.who.int/health-topics/physical-activity" target="_blank" rel="noopener noreferrer">WHO – fysisk aktivitet ↗</a><a href="https://www.aad.org/public/everyday-care" target="_blank" rel="noopener noreferrer">American Academy of Dermatology ↗</a><a href="https://www.livsmedelsverket.se/" target="_blank" rel="noopener noreferrer">Livsmedelsverket ↗</a></div>
+</section>
+<section class="deep-section" id="plan">
+  <div class="section-head"><div><div class="eyebrow">FRÅN KUNSKAP TILL VANA</div><h2>En plan som går att hålla.</h2></div><p>Välj en rimlig startpunkt. Anpassa planen efter din vardag, ekonomi och dina egna behov.</p></div>
+  <div class="plan-grid">
+    <article class="plan"><b>VECKA 1–2</b><h3>Skapa basen</h3><p>Välj en enkel hudrutin, ordna sömntiderna så gott det går och planera in lätt rörelse. Skriv ner vad som faktiskt är genomförbart.</p></article>
+    <article class="plan"><b>MÅNAD 1–3</b><h3>Bygg kontinuitet</h3><p>Fortsätt med vanorna, lägg till regelbunden styrketräning om det passar dig och justera hår- och klädvård efter erfarenhet. Ändra inte allt samtidigt.</p></article>
+    <article class="plan"><b>MÅNAD 3–12</b><h3>Utvärdera sakligt</h3><p>Behåll det som fungerar, sluta med sådant som irriterar eller tar orimligt mycket tid och sök sakkunnig hjälp när frågan kräver det.</p></article>
+  </div>
+</section>
+
 <section class="feature" id="metod"><div><div class="eyebrow">VÅR UTGÅNGSPUNKT</div><h2>Inga genvägar som säljer drömmar.</h2><p>Utseende påverkas av genetik, hälsa, stil, sammanhang och personliga preferenser. Vi fokuserar på sådant du kan påverka på ett sunt och realistiskt sätt. Inga poäng kan sammanfatta en människa.</p></div><a class="btn" href="facemath.html">Se FaceMath ↗</a></section>
 </div></main>
 <section class="admin" id="adminSection"><div class="shell">
@@ -94,6 +142,7 @@ body{line-height:1.5}
 </div>
 </div></section>
 <footer class="shell foot"><strong>LOOKSMAX</strong><span>Utveckling utan överdrifter. Innehåll för allmän vägledning – inte medicinsk rådgivning.</span><span>© <span id="year"></span></span></footer>
+<div class="shell"><small class="signature">doktor roman kelder · fiktiv signatur, inte en medicinsk yrkestitel</small></div>
 <div class="modal" id="detailModal"><article class="dialog"><button class="close" id="closeModal">×</button><div id="detailContent"></div></article></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script>
