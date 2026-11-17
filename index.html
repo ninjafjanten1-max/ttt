@@ -10,8 +10,6 @@
 <meta property="og:description" content="Diskutera utseende, hud, hår, träning och stil på NORDMAX.">
 <meta name="twitter:card" content="summary_large_image">
 <title>NORDMAX — forum</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0c100f;--panel:#151c19;--line:#303c36;--text:#edf1ec;--muted:#9aa89f;--lime:#c5d0c8}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 Manrope,system-ui,sans-serif}a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
@@ -26,36 +24,71 @@
 @media(max-width:700px){.shell{padding:0 14px}.forum-masthead{align-items:stretch;flex-direction:column;padding:26px 0 20px}.mast-aside{width:100%;grid-template-columns:auto 1fr;align-items:center}.mast-aside small{grid-column:2}.mast-aside .btn{grid-column:1/-1}.forum-layout{grid-template-columns:1fr}.forum-categories{overflow:auto}#forumCategoryList{display:flex;min-width:max-content}.forum-category{width:auto;min-width:145px}.forum-side{grid-column:auto;display:block}.forum-side-panel{grid-column:auto}.forum-head{align-items:flex-start}.forum-online{display:none}.thread-row{grid-template-columns:30px minmax(0,1fr) 43px;gap:7px}.thread-avatar{width:28px;height:28px}.thread-count{padding-left:6px}.foot{flex-direction:column}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
+<style id="nordic-forum-theme">
+:root{--bg:#111d29;--panel:#182936;--line:#344957;--text:#e7eef0;--muted:#a7b8bf;--lime:#a9c7cc}
+body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+.topbar{background:#101b26;border-bottom-color:#344957;backdrop-filter:none}
+.brand{font-family:Arial,Helvetica,sans-serif;letter-spacing:-.7px}.brand span{color:#a9c7cc}
+.links{font-size:13px;font-weight:600}
+.btn{background:#315a59;color:#f0f5f4;border-radius:3px;font-size:12px;letter-spacing:0;padding:10px 14px}.btn:hover{background:#3d6d69}.btn.secondary{background:#203543;color:#e7eef0;border-radius:3px;border-color:#49606c}
+.eyebrow,.mono,.forum-side-label,.forum-feed-head span,.thread-meta,.thread-count span,.pin-label{font-family:Arial,Helvetica,sans-serif;letter-spacing:.04em}
+.eyebrow{font-size:10px;color:#a9c7cc;font-weight:700}
+.forum-masthead{padding:30px 0 24px;border-color:var(--line)}
+.forum-masthead h1{font-size:clamp(30px,3.6vw,43px);font-weight:700;letter-spacing:-1.5px;line-height:1.15}
+.forum-masthead h1 em{color:#a9c7cc}
+.forum-masthead p{font-size:14px;max-width:650px;color:#b7c5ca}
+.mast-aside{background:#182936;border-color:var(--line);border-radius:3px;box-shadow:none;width:205px;padding:13px}
+.mast-aside b{font:700 11px Arial,sans-serif;letter-spacing:.03em}.mast-aside small{font-size:11px}
+.forum-wrap{margin:20px 0 48px}.forum-head{border-color:var(--line)}.forum-head h2{font-size:19px;font-weight:700}
+.forum-layout{gap:10px}
+.forum-categories,.forum-main,.forum-side{background:#182936;border:1px solid var(--line);border-radius:3px;box-shadow:none}
+.forum-categories{padding:9px 7px}.forum-category{border-radius:2px;padding:8px 6px}.forum-category b{font-size:12px}.forum-category small{font-size:10px}
+.forum-category.active,.forum-category:hover{background:#233b49;border-color:#3b5968}.forum-category.active b{color:#c4dce0}.forum-category>span{color:#a9c7cc}
+.forum-mini-note b{font:700 10px Arial,sans-serif;color:#a9c7cc}.forum-mini-note p{font-size:11px}
+.forum-main{padding:0 13px 10px}.forum-feed-head{height:42px}.forum-feed-head b{font-size:13px}
+.thread-row{padding:13px 2px;border-color:#2c414e;grid-template-columns:34px minmax(0,1fr) 50px}
+.thread-avatar{width:30px;height:30px;border-radius:3px;background:#294452;color:#d3e4e7}.thread-title{font-size:13px;font-weight:700}.thread-meta{font-size:10px}.thread-count{border-color:var(--line)}
+.pin-label{background:#294c4b;color:#d5e7e4;border-radius:2px}
+.forum-side{padding:12px}.forum-side-panel{border-color:var(--line)}.forum-stats{gap:6px}
+.forum-stats div{background:#14232e;border:1px solid #344957;border-radius:2px}.forum-stats b{font-size:19px}.forum-stats span{font:10px Arial,sans-serif;letter-spacing:.02em}
+.forum-side h3{font-size:14px}.forum-side p,.forum-side li{font-size:11px}
+.forum-auth input,.forum-auth textarea,.forum-auth select,.forum-compose input,.forum-compose textarea,.forum-compose select{background:#101e29;border:1px solid #405866;border-radius:2px;font-size:12px;padding:10px;color:#e7eef0}
+.forum-compose textarea{min-height:105px}.forum-side .btn{font-size:12px}
+.modal{background:#07111bd9}.dialog{background:#182936;border-color:#405866;border-radius:3px}.close{border-radius:3px;background:#203543;border-color:#405866}
+.thread-detail{color:#d0dcdf}.reply{border-color:var(--line)}.reply b{color:#b9d2d6}.notice,.forum-note{color:#aebfc5}
+.foot{border-color:var(--line);font-size:11px}
+@media(max-width:700px){.forum-masthead h1{font-size:31px}.mast-aside{width:100%}}
+</style>
 </head>
 <body>
 <header class="topbar"><div class="shell nav"><a class="brand" href="#">NORD<span>MAX</span></a><nav class="links"><a href="#forum">Forum</a></nav></div></header>
 <a class="skip-link" href="#forum">Hoppa till forumet</a>
 <main id="publicApp">
 <div class="shell">
-<section class="forum-masthead"><div><div class="eyebrow">NORDMAX COMMUNITY FORUM</div><h1>Utvecklas.<br><em>Diskutera.</em></h1><p>En mötesplats för genomtänkt självutveckling, utseende, träning och stil. Dela erfarenheter. Ställ bättre frågor.</p></div><div class="mast-aside"><span class="live-dot"></span><b>ÖPPET FORUM</b><small>Delta i diskussionerna eller starta en egen tråd.</small><a class="btn" href="#forum-auth">SKAPA KONTO ↗</a></div></section>
+<section class="forum-masthead"><div><div class="eyebrow">SVENSKT DISKUSSIONSFORUM</div><h1>Välkommen till <em>NORDMAX</em></h1><p>Diskutera utseende, hud och hår, träning och kläder. Ställ frågor, dela erfarenheter och hjälp andra medlemmar.</p></div><div class="mast-aside"><b>MEDLEMSFORUM</b><small>Läs diskussionerna eller logga in för att skriva egna inlägg.</small><a class="btn" href="#forum-auth">SKAPA KONTO ↗</a></div></section>
 <section class="forum-wrap" id="forum">
- <div class="forum-head"><div><div class="eyebrow">BLÄDDRA I GEMENSKAPEN</div><h2>Forumöversikt</h2></div><div class="forum-head-actions"><span class="forum-online"><i></i> DISKUSSIONER</span><a class="btn small" href="#forum-auth">+ NY TRÅD</a></div></div>
+ <div class="forum-head"><div><div class="eyebrow">NORDMAX</div><h2>Diskussionsforum</h2></div><div class="forum-head-actions"><a class="btn small" href="#forum-auth">+ NY TRÅD</a></div></div>
  <div class="forum-layout">
   <aside class="forum-categories"><div class="forum-side-label">FORUMAVDELNINGAR</div><div id="forumCategoryList"><button class="forum-category active" data-forum-category="Alla"><span>◈</span><b>Alla diskussioner</b><small>Senaste från forumet</small></button><button class="forum-category" data-forum-category="Utseende"><span>◉</span><b>Utseende</b><small>Utseende och helhetsintryck</small></button><button class="forum-category" data-forum-category="Hud & hår"><span>✳</span><b>Hud & hår</b><small>Hudvård och hårvård</small></button><button class="forum-category" data-forum-category="Träning"><span>⌁</span><b>Träning</b><small>Styrka och återhämtning</small></button><button class="forum-category" data-forum-category="Stil"><span>◇</span><b>Stil</b><small>Kläder och personlig stil</small></button><button class="forum-category" data-forum-category="Frågor"><span>?</span><b>Frågor</b><small>Be om råd och perspektiv</small></button><button class="forum-category" data-forum-category="Framsteg"><span>↗</span><b>Framsteg</b><small>Vanor och utveckling</small></button><button class="forum-category" data-forum-category="Övrigt"><span>···</span><b>Övrigt</b><small>Övriga samtal</small></button></div><div class="forum-mini-note"><b>VÄLKOMMEN TILL NORDMAX</b><p>Håll diskussionerna sakliga. Respektera andra medlemmar och publicera aldrig privata bilder eller personuppgifter.</p></div></aside>
   <div class="forum-main">
    <div class="forum-feed-head"><b id="forumFeedTitle">Alla diskussioner</b><span>SENASTE AKTIVITET</span></div><div id="forumThreads"><div class="empty">Hämtar diskussioner…</div></div>
   </div>
   <aside class="forum-side">
-   <div class="forum-side-panel"><div class="forum-side-label">SNABBÖVERSIKT</div><div class="forum-stats"><div><b id="forumThreadStat">—</b><span>TRÅDAR</span></div><div><b id="forumReplyStat">—</b><span>SVAR</span></div></div></div>
-   <div id="forum-auth"><div class="eyebrow">MEDLEMSKAP</div><h3 id="forumAuthTitle">Logga in eller skapa konto</h3><p class="forum-auth-copy">Bli en del av samtalet. Ett konto krävs för att skriva och svara.</p>
+   <div class="forum-side-panel"><div class="forum-side-label">FORUMSTATISTIK</div><div class="forum-stats"><div><b id="forumThreadStat">—</b><span>VISAS</span></div><div><b id="forumReplyStat">—</b><span>SVAR</span></div></div></div>
+   <div id="forum-auth"><div class="eyebrow">MEDLEMMAR</div><h3 id="forumAuthTitle">Logga in eller skapa konto</h3><p class="forum-auth-copy">Du behöver ett konto för att starta trådar och svara.</p>
     <form class="forum-auth" id="forumAuthForm"><input id="forumEmail" type="email" placeholder="E-postadress" required><input id="forumPassword" type="password" placeholder="Lösenord (minst 8 tecken)" minlength="8" required><input id="forumUsername" placeholder="Användarnamn (vid registrering)" minlength="3" maxlength="24"><button class="btn" id="forumAuthSubmit">Skapa konto</button><button class="btn secondary" type="button" id="forumToggleAuth">Jag har redan ett konto</button></form>
     <div class="forum-status" id="forumAuthStatus"></div><button class="btn secondary hide" id="forumLogout">Logga ut</button>
    </div>
    <div id="forumComposer" class="hide"><div class="eyebrow">NY DISKUSSION</div><h3>Starta en tråd</h3><form class="forum-compose" id="threadForm"><select id="threadCategory"><option>Utseende</option><option>Hud & hår</option><option>Träning</option><option>Stil</option><option>Frågor</option><option>Framsteg</option><option>Övrigt</option></select><input id="threadTitle" placeholder="Rubrik" minlength="8" maxlength="140" required><textarea id="threadBody" placeholder="Vad vill du diskutera? Skriv tydligt och respektfullt." minlength="20" maxlength="12000" required></textarea><button class="btn">Publicera tråd</button></form><div class="forum-status" id="threadStatus"></div></div>
    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
-   <div class="eyebrow">GEMENSKAPENS REGLER</div><h3>Håll nivån hög.</h3><ul><li>Respektera andra och deras gränser.</li><li>Publicera aldrig privata bilder eller personuppgifter.</li><li>Ingen mobbning, trakasserier eller hets.</li><li>Inga farliga råd om läkemedel, hormoner eller extrema dieter.</li><li>Forumet ersätter inte vård eller sakkunnig rådgivning.</li></ul><p class="forum-note">Nya konton kan skriva direkt. Inlägg kan rapporteras till administratören via webbplatsens kontaktväg när sådan finns.</p>
+   <div class="eyebrow">FORUMREGLER</div><h3>Visa vanligt hyfs.</h3><ul><li>Respektera andra och deras gränser.</li><li>Publicera aldrig privata bilder eller personuppgifter.</li><li>Ingen mobbning, trakasserier eller hets.</li><li>Inga farliga råd om läkemedel, hormoner eller extrema dieter.</li><li>Forumet ersätter inte vård eller sakkunnig rådgivning.</li></ul><p class="forum-note">Nya konton kan skriva direkt. Inlägg kan rapporteras till administratören via webbplatsens kontaktväg när sådan finns.</p>
   </aside>
  </div>
 </section>
 <div class="modal" id="forumModal"><article class="dialog"><button class="close" id="forumClose">×</button><div id="forumDetail"></div></article></div>
 
 </div></main>
-<footer class="shell foot"><strong>NORDMAX FORUM</strong><span>Håll diskussionerna sakliga och respektfulla.</span></footer>
+<footer class="shell foot"><strong>NORDMAX</strong><span>Ett svenskt forum för medlemmar och diskussioner.</span></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script>
 (() => {
