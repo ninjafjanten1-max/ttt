@@ -69,6 +69,7 @@
   </div>
 
   <div class="card" id="result">
+    <p class="note" style="margin:0 0 16px">Måttmatchning mot förenklade riktvärden – inte ett betyg på utseende eller attraktivitet.</p>
     <div class="score-row">
       <div class="ring" id="ring"><span id="scoreNum">0</span></div>
       <div class="verdict">
@@ -83,9 +84,7 @@
 
   <div class="card note">
     <b>Så fungerar det:</b> En ansiktsmodell med 478 punkter (MediaPipe) uppskattar bland annat ögonvrår, iris, näsa, mun och käklinje i tre dimensioner.
-    The app first <i>frontalizes</i> the face — it removes head roll and left/right turn using the 3D landmarks, so a slightly turned
-    head no longer squashes the eye ratios. It then measures symmetry around the facial midline and compares key proportions
-    (eye spacing, eye width vs. face width, canthal tilt, nose, mouth, facial thirds) to classical ideals such as
+    Appen försöker först räta upp huvudets lutning och vridning med hjälp av punkterna. Därefter uppskattar den symmetri kring ansiktets mittlinje och jämför vissa proportioner – exempelvis ögonavstånd, ögonbredd i förhållande till ansiktsbredd, ögonvrårnas lutning, näsa, mun och ansiktets tredjedelar – med förenklade riktvärden som
     ”ett ögonmåtts avstånd” och det gyllene snittet.<br><br>
     <b>Viktigt:</b> det här är ett förenklat mätverktyg – inte ett mått på ditt värde eller hur attraktiv du är. Utseende och hur människor uppfattas påverkas av
     uttryck, hud, stil, kultur, personlighet och mycket annat. Fotot lämnar inte din enhet.
@@ -238,12 +237,12 @@ function analyze(P) {
   // ---- quality checks ----
   let conf = 100;
   const rawFaceW = d2(P[234], P[454]);
-  if (rawFaceW < 150) { warnings.push('The face is small in the image — upload a higher-resolution or closer crop.'); conf -= 20; }
-  if (Math.abs(yawDeg) > 25) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — too much to correct reliably. Use a straight-on photo.`); conf -= 35; }
-  else if (Math.abs(yawDeg) > 10) { warnings.push(`Head is turned about ${Math.abs(yawDeg).toFixed(0)}° — it was corrected mathematically, but a straight-on photo is more accurate.`); conf -= 12; }
-  if (Math.abs(rollDeg) > 15) { warnings.push(`Head is tilted ${Math.abs(rollDeg).toFixed(0)}° — corrected, but a level head is better.`); conf -= 5; }
+  if (rawFaceW < 150) { warnings.push('Ansiktet är litet i bilden. Prova en bild med högre upplösning eller beskär fotot.'); conf -= 20; }
+  if (Math.abs(yawDeg) > 25) { warnings.push(`Huvudet är vridet cirka ${Math.abs(yawDeg).toFixed(0)}°. Vridningen är för stor för en tillförlitlig korrigering. Använd ett foto rakt framifrån.`); conf -= 35; }
+  else if (Math.abs(yawDeg) > 10) { warnings.push(`Huvudet är vridet cirka ${Math.abs(yawDeg).toFixed(0)}°. Vridningen har korrigerats matematiskt, men ett foto rakt framifrån ger bättre underlag.`); conf -= 12; }
+  if (Math.abs(rollDeg) > 15) { warnings.push(`Huvudet lutar ${Math.abs(rollDeg).toFixed(0)}°. Lutningen har korrigerats, men ett rakt huvud ger bättre underlag.`); conf -= 5; }
   if (openness < 0.2) { warnings.push('Ögon look closed or squinting — eye measurements are unreliable. Retake with eyes relaxed and open.'); conf -= 25; }
-  if (d2(Q[13], Q[14]) / faceW > 0.05) { warnings.push('Mouth looks open or smiling widely — mouth and lower-face ratios may be off. Use a neutral expression.'); conf -= 12; }
+  if (d2(Q[13], Q[14]) / faceW > 0.05) { warnings.push('Munnen ser öppen ut eller leendet är stort. Måtten för munnen och nedre delen av ansiktet kan bli missvisande. Använd ett neutralt ansiktsuttryck.'); conf -= 12; }
   conf = Math.max(10, conf);
 
   // ---- metrics: [name, group, score, weight, detail] ----
@@ -254,24 +253,24 @@ function analyze(P) {
       `Genomsnittlig skillnad mellan höger och vänster sida: ${(asym * 100).toFixed(1)}% of face width (ideal 0%)`);
 
   add('Avstånd mellan ögonen', 'Ögon', gauss(icd / eyeW, 1.0, 0.12), 0.12,
-      `Gap between inner corners ÷ eye width = ${(icd / eyeW).toFixed(2)} (ideal 1.00)`);
+      `Avstånd mellan inre ögonvrår ÷ ögonbredd = ${(icd / eyeW).toFixed(2)} (valt riktvärde 1,00)`);
   add('Ögonbredd i förhållande till ansiktet', 'Ögon', gauss(faceW / eyeW, 5.0, 0.4), 0.08,
-      `Face width ÷ eye width = ${(faceW / eyeW).toFixed(2)} (classical "fifths" ideal 5.0)`);
+      `Ansiktsbredd ÷ ögonbredd = ${(faceW / eyeW).toFixed(2)} (förenklat riktvärde 5,0)`);
   add('Avstånd mellan pupiller', 'Ögon', gauss(ipd / faceW, 0.46, 0.03), 0.06,
-      `Pupil distance ÷ face width = ${(ipd / faceW).toFixed(2)} (ideal ≈ 0.46)`);
+      `Pupillavstånd ÷ ansiktsbredd = ${(ipd / faceW).toFixed(2)} (valt riktvärde cirka 0,46)`);
   add('Ögonvrårnas lutning', 'Ögon', gauss(tilt, 5, 4), 0.06,
-      `Outer eye corners sit ${tilt >= 0 ? 'higher' : 'lower'} by ${Math.abs(tilt).toFixed(1)}° (ideal ≈ +5°)`);
+      `Yttre ögonvrår sitter ${tilt >= 0 ? 'högre' : 'lägre'} med ${Math.abs(tilt).toFixed(1)}° (valt riktvärde cirka +5°)`);
   add('Ögonöppning', 'Ögon', gauss(openness, 0.36, 0.08), 0.04,
-      `Eye height ÷ width = ${openness.toFixed(2)} (ideal ≈ 0.36)`);
+      `Ögonhöjd ÷ ögonbredd = ${openness.toFixed(2)} (valt riktvärde cirka 0,36)`);
 
   add('Näsans bredd', 'Näsa, mun och tredjedelar', gauss(noseW / icd, 1.0, 0.15), 0.10,
       `Näsans bredd ÷ eye gap = ${(noseW / icd).toFixed(2)} (ideal 1.00)`);
   add('Mun i förhållande till näsa', 'Näsa, mun och tredjedelar', gauss(mouthW / noseW, 1.55, 0.2), 0.10,
-      `Mouth width ÷ nose width = ${(mouthW / noseW).toFixed(2)} (ideal ≈ 1.5–1.6)`);
+      `Munbredd ÷ näsbredd = ${(mouthW / noseW).toFixed(2)} (valt riktvärde cirka 1,5–1,6)`);
   add('Ansiktets tredjedelar', 'Näsa, mun och tredjedelar', gauss(lowerThird / middleThird, 1.0, 0.15), 0.10,
-      `Lower ÷ middle face = ${(lowerThird / middleThird).toFixed(2)} (ideal ≈ 1.00)`);
+      `Nedre ÷ mellersta ansiktsdelen = ${(lowerThird / middleThird).toFixed(2)} (valt riktvärde cirka 1,00)`);
   add('Balans i nedre ansiktet', 'Näsa, mun och tredjedelar', gauss(mouthToChin / noseToMouth, 2.0, 0.3), 0.09,
-      `Mouth→chin ÷ nose→mouth = ${(mouthToChin / noseToMouth).toFixed(2)} (ideal ≈ 2.00)`);
+      `Mun–haka ÷ näsa–mun = ${(mouthToChin / noseToMouth).toFixed(2)} (valt riktvärde cirka 2,00)`);
 
   const wsum = m.reduce((s, x) => s + x.weight, 0);
   const raw = m.reduce((s, x) => s + x.score * x.weight, 0) / wsum;
@@ -312,10 +311,10 @@ function showResult({ total, metrics, warnings, conf }) {
   $('scoreNum').textContent = t;
   $('ring').style.setProperty('--p', t);
   const [title, text] =
-    t >= 88 ? ['Exceptional harmony', 'Dina uppmätta proportioner ligger nära de valda klassiska riktvärdena.'] :
-    t >= 78 ? ['High harmony', 'Mätningarna visar relativt jämna proportioner enligt de valda riktvärdena.'] :
-    t >= 66 ? ['Good harmony', 'Flera mått ligger nära de valda riktvärdena.'] :
-    t >= 55 ? ['Average harmony', 'Ett vanligt spann av mått – verkliga ansikten följer sällan idealmått exakt.'] :
+    t >= 88 ? ['Mycket nära riktvärdena', 'Dina uppmätta proportioner ligger nära de valda klassiska riktvärdena.'] :
+    t >= 78 ? ['Relativt nära riktvärdena', 'Mätningarna visar relativt jämna proportioner enligt de valda riktvärdena.'] :
+    t >= 66 ? ['Flera mått nära riktvärdena', 'Flera mått ligger nära de valda riktvärdena.'] :
+    t >= 55 ? ['Vanligt spann av mått', 'Ett vanligt spann av mått – verkliga ansikten följer sällan idealmått exakt.'] :
               ['Avviker från riktvärdena', 'Måtten avviker från de valda riktvärdena. Det säger ingenting om hur attraktiv du är. Kameravinkel och ansiktsuttryck påverkar dessutom resultatet.'];
   $('verdictTitle').textContent = title;
   $('verdictText').textContent = text;
